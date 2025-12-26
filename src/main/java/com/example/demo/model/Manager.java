@@ -1,18 +1,31 @@
 package com.example.demo.model;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Manager entity representing management staff
  * Maps to the Manager table in the database
  */
 public class Manager extends Employee {
-    private java.util.List<Employee> departmentEmployees;
+    private int managerID;
+    private String managementLevel;
+    private BigDecimal bonus;
+
+    private List<Employee> departmentEmployees;
     private Department department;
+
+    public Manager() {
+        super();
+        this.departmentEmployees = new ArrayList<>();
+    }
 
     // Conforming to Employee constructor
     public Manager(String name, String gender, String address, java.time.LocalDate dob, double salary, String jobTitle,
-            java.util.List<String> phoneNumbers) {
+            List<String> phoneNumbers) {
         super(name, gender, address, dob, salary, jobTitle, phoneNumbers);
-        this.departmentEmployees = new java.util.ArrayList<>();
+        this.departmentEmployees = new ArrayList<>();
     }
 
     public String evaluateEmployee(Employee e) {
@@ -52,12 +65,35 @@ public class Manager extends Employee {
         this.department = department;
     }
 
-    public java.util.List<Employee> getDepartmentEmployees() {
+    public List<Employee> getDepartmentEmployees() {
         return departmentEmployees;
     }
 
-    public void setDepartmentEmployees(java.util.List<Employee> employees) {
+    public void setDepartmentEmployees(List<Employee> employees) {
         this.departmentEmployees = employees;
     }
 
+    public int getManagerID() {
+        return managerID;
+    }
+
+    public void setManagerID(int managerID) {
+        this.managerID = managerID;
+    }
+
+    public String getManagementLevel() {
+        return managementLevel;
+    }
+
+    public void setManagementLevel(String managementLevel) {
+        this.managementLevel = managementLevel;
+    }
+
+    public BigDecimal getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(BigDecimal bonus) {
+        this.bonus = bonus;
+    }
 }

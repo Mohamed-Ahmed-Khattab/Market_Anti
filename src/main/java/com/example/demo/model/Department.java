@@ -10,6 +10,7 @@ public class Department {
     private double budget;
     private String status;
     private double revenue;
+    private int departmentID;
     private List<String> locations;
 
     public Department(double budget, String name, String status) {
@@ -18,6 +19,14 @@ public class Department {
         this.status = status;
         this.employees = new ArrayList<>();
         this.locations = new ArrayList<>();
+    }
+
+    public int getId() {
+        return departmentID;
+    }
+
+    public void setId(int id) {
+        this.departmentID = id;
     }
 
     public double calculateTotalSalaries() {
@@ -100,5 +109,13 @@ public class Department {
 
     public List<String> getLocation() {
         return locations;
+    }
+
+    public String getDepartmentName() {
+        return name;
+    }
+
+    public int getDepartmentID() {
+        return departmentID;
     }
 }

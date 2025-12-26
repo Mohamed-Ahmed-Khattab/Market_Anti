@@ -76,7 +76,7 @@ public class EmployeeFormController implements Initializable {
 
             if (employee.getDepartmentID() != null) {
                 for (Department d : departmentCombo.getItems()) {
-                    if (d.getDepartmentID().equals(employee.getDepartmentID())) {
+                    if (d.getDepartmentID() == employee.getDepartmentID()) {
                         departmentCombo.setValue(d);
                         break;
                     }

@@ -28,7 +28,7 @@ public class CartItemDAO {
             stmt.setInt(1, cartItem.getCartID());
             stmt.setInt(2, cartItem.getProductID());
             stmt.setInt(3, cartItem.getQuantity());
-            stmt.setBigDecimal(4, cartItem.getPriceAtAdd());
+            stmt.setDouble(4, cartItem.getPriceAtAdd());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -133,7 +133,7 @@ public class CartItemDAO {
         item.setCartID(rs.getInt("cartID"));
         item.setProductID(rs.getInt("productID"));
         item.setQuantity(rs.getInt("quantity"));
-        item.setPriceAtAdd(rs.getBigDecimal("priceAtAdd"));
+        item.setPriceAtAdd(rs.getDouble("priceAtAdd"));
 
         Timestamp addedAt = rs.getTimestamp("addedAt");
         if (addedAt != null) {

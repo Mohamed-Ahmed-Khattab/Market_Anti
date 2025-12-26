@@ -79,7 +79,8 @@ public class CartController implements Initializable {
 
         totalColumn.setCellValueFactory(cellData -> {
             CartItem item = cellData.getValue();
-            return new SimpleObjectProperty<>(item.getPriceAtAdd().multiply(new BigDecimal(item.getQuantity())));
+            return new SimpleObjectProperty<>(
+                    BigDecimal.valueOf(item.getPriceAtAdd()).multiply(BigDecimal.valueOf(item.getQuantity())));
         });
 
         cartTable.setItems(cartItems);
@@ -164,7 +165,7 @@ public class CartController implements Initializable {
             // Check if item already exists in cart, then just update quantity
             boolean exists = false;
             for (CartItem item : cartItems) {
-                if (item.getProductID().equals(product.getProductID())) {
+                if (item.getProductID() == product.getProductID()) {
                     int newQty = item.getQuantity() + qty;
                     if (product.getStockQuantity() < newQty) {
                         AlertUtil.showWarning("Stock Error", "Total quantity exceeds stock.");

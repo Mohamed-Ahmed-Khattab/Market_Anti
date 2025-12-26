@@ -4,16 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Supplier {
-    private final int supplierID; // readOnly
+    private int supplierID;
     private static int lastID = 0;
     private List<Product> products;
     private String name;
     private double rating;
     private boolean active;
 
+    // Additional fields for DAO
+    private String supplierName; // Alias for name or specific field
+    private String contactPerson;
+    private String email;
+    private String phoneNumber;
+    private String address;
+    private String city;
+    private String country;
+
+    public Supplier() {
+        this.supplierID = ++lastID;
+        this.products = new ArrayList<>();
+        this.active = true;
+    }
+
     public Supplier(String name, double rating) {
         this.supplierID = ++lastID;
         this.name = name;
+        this.supplierName = name; // Sync
         this.rating = rating;
         this.active = true;
         this.products = new ArrayList<>();
@@ -45,6 +61,10 @@ public class Supplier {
         return supplierID;
     }
 
+    public void setSupplierID(int supplierID) {
+        this.supplierID = supplierID;
+    }
+
     public void setProducts(List<Product> products) {
         this.products = products;
     }
@@ -55,10 +75,70 @@ public class Supplier {
 
     public void setName(String name) {
         this.name = name;
+        this.supplierName = name;
     }
 
     public String getName() {
         return name;
+    }
+
+    // DAO Compatibility Accessors
+
+    public String getSupplierName() {
+        return supplierName != null ? supplierName : name;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
+        this.name = supplierName;
+    }
+
+    public String getContactPerson() {
+        return contactPerson;
+    }
+
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public void setRating(double rating) {

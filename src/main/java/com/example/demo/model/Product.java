@@ -10,6 +10,10 @@ public class Product implements SearchItem {
     private double price;
     private List<Product> substitue;
 
+    public Product() {
+        this.substitue = new ArrayList<>();
+    }
+
     public Product(int productID, String name, int stockQuantity, double price) {
         this.productID = productID;
         this.name = name;
@@ -68,6 +72,10 @@ public class Product implements SearchItem {
     }
 
     public String getName() {
+        return name;
+    }
+
+    public String getProductName() {
         return name;
     }
 

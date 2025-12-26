@@ -50,7 +50,7 @@ public class SupplierFormController implements Initializable {
             addressField.setText(supplier.getAddress());
             cityField.setText(supplier.getCity());
             countryField.setText(supplier.getCountry());
-            ratingField.setText(supplier.getRating() != null ? supplier.getRating().toString() : "");
+            ratingField.setText(String.valueOf(supplier.getRating()));
         }
     }
 
@@ -72,10 +72,10 @@ public class SupplierFormController implements Initializable {
 
             try {
                 if (!ratingField.getText().isEmpty()) {
-                    currentSupplier.setRating(new BigDecimal(ratingField.getText()));
+                    currentSupplier.setRating(Double.parseDouble(ratingField.getText()));
                 }
             } catch (NumberFormatException e) {
-                currentSupplier.setRating(BigDecimal.ZERO);
+                currentSupplier.setRating(0.0);
             }
 
             boolean success;

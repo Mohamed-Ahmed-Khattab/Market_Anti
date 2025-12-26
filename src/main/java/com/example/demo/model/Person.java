@@ -19,6 +19,10 @@ public abstract class Person implements SearchItem {
         this.dateOfBirth = dob;
     }
 
+    protected Person() {
+        // Default constructor for subclasses
+    }
+
     public abstract String getRole();
 
     @Override

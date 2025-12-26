@@ -148,4 +148,16 @@ public class CustomerDAO {
             return new String[] { parts[0], "" };
         return parts;
     }
+    public boolean updateLoyaltyPoints(int customerID, int points) {
+        String sql = "UPDATE Customer SET loyaltyPoints = loyaltyPoints + ? WHERE customerID = ?";
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, points);
+            stmt.setInt(2, customerID);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

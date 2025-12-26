@@ -1,24 +1,31 @@
 package com.example.demo.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Cart {
     private CartItem latestItem;
     private List<CartItem> items;
-    private final int cartID; // readOnly
+    private int cartID;
     private static int lastID = 0;
     private String status;
     private LocalDate creationDate;
     private double totalPrice;
 
+    // Additional fields for DAO
+    private int customerID;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
     public Cart(int id, String status, double totalPrice) {
-        this.cartID = id > 0 ? id : ++lastID; // Handle explicit ID or auto-gen
+        this.cartID = id > 0 ? id : ++lastID;
         this.status = status;
         this.totalPrice = totalPrice;
         this.items = new ArrayList<>();
         this.creationDate = LocalDate.now();
+        this.createdAt = LocalDateTime.now();
     }
 
     // Constructor matching UML somewhat or default
@@ -26,6 +33,7 @@ public class Cart {
         this.cartID = ++lastID;
         this.items = new ArrayList<>();
         this.creationDate = LocalDate.now();
+        this.createdAt = LocalDateTime.now();
         this.status = "New";
     }
 
@@ -72,6 +80,8 @@ public class Cart {
         return total;
     }
 
+    // Getters and Setters matching DAO
+
     public void setLatestItem(CartItem latestItem) {
         this.latestItem = latestItem;
     }
@@ -93,6 +103,18 @@ public class Cart {
         return cartID;
     }
 
+    public void setCartID(int cartID) {
+        this.cartID = cartID;
+    }
+
+    public int getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(int customerID) {
+        this.customerID = customerID;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
@@ -107,6 +129,22 @@ public class Cart {
 
     public LocalDate getCreationDate() {
         return creationDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public void setTotalPrice(double totalPrice) {

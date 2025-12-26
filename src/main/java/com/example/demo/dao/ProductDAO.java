@@ -131,4 +131,33 @@ public class ProductDAO {
         // Constructor: productID, name, stockQuantity, price
         return new Product(id, name, stock, price);
     }
+
+    public List<Product> getLowStock() {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM Product WHERE isActive = true AND stockQuantity < 10 ORDER BY stockQuantity ASC";
+
+        try (Connection conn = dbManager.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                products.add(extractProductFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+    public boolean updateStock(int productID, int quantityChange) {
+        String sql = "UPDATE Product SET stockQuantity = stockQuantity + ? WHERE productID = ?";
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, quantityChange);
+            stmt.setInt(2, productID);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

@@ -108,4 +108,18 @@ public class Customer extends Person {
     public String getRole() {
         return "Customer";
     }
+
+    public String getFullName() {
+        return getName();
+    }
+
+    private int customerID;
+
+    public int getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(int id) {
+        this.customerID = id;
+    }
 }

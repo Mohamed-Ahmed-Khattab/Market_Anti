@@ -30,7 +30,7 @@ public class SupplierDAO {
             stmt.setString(5, supplier.getAddress());
             stmt.setString(6, supplier.getCity());
             stmt.setString(7, supplier.getCountry());
-            stmt.setBigDecimal(8, supplier.getRating());
+            stmt.setDouble(8, supplier.getRating());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -96,7 +96,7 @@ public class SupplierDAO {
             stmt.setString(5, supplier.getAddress());
             stmt.setString(6, supplier.getCity());
             stmt.setString(7, supplier.getCountry());
-            stmt.setBigDecimal(8, supplier.getRating());
+            stmt.setDouble(8, supplier.getRating());
             stmt.setInt(9, supplier.getSupplierID());
 
             return stmt.executeUpdate() > 0;
@@ -130,7 +130,7 @@ public class SupplierDAO {
         supplier.setAddress(rs.getString("address"));
         supplier.setCity(rs.getString("city"));
         supplier.setCountry(rs.getString("country"));
-        supplier.setRating(rs.getBigDecimal("rating"));
+        supplier.setRating(rs.getDouble("rating"));
 
         return supplier;
     }

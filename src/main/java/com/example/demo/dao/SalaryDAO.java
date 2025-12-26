@@ -188,4 +188,21 @@ public class SalaryDAO {
 
         return salary;
     }
+
+    public List<Salary> getAll() {
+        List<Salary> salaries = new ArrayList<>();
+        String sql = "SELECT * FROM Salary ORDER BY effectiveDate DESC";
+
+        try (Connection conn = dbManager.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                salaries.add(extractSalaryFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return salaries;
+    }
 }
