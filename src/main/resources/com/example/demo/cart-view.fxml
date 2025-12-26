@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.controller.CartController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #e0e0e0;">
+               <children>
+                  <Label text="New Order">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding>
+            </HBox>
+            <VBox spacing="10.0">
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+               </padding>
+               <children>
+                  <GridPane hgap="10.0" vgap="10.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="375.0" minWidth="10.0" prefWidth="120.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="641.0" minWidth="10.0" prefWidth="630.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Select Customer:">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="customerCombo" onAction="#handleCustomerSelect" prefHeight="25.0" prefWidth="300.0" promptText="Choose Customer" GridPane.columnIndex="1" />
+                     </children>
+                  </GridPane>
+                  <Separator prefWidth="200.0" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label text="Add Product:" />
+                        <ComboBox fx:id="productCombo" prefWidth="250.0" promptText="Select Product" />
+                        <Label text="Qty:" />
+                        <TextField fx:id="quantityField" prefWidth="60.0" text="1" />
+                        <Button fx:id="addToCartBtn" mnemonicParsing="false" onAction="#handleAddToCart" text="Add to Cart" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <TableView fx:id="cartTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="productNameColumn" prefWidth="300.0" text="Product" />
+                <TableColumn fx:id="priceColumn" prefWidth="100.0" text="Unit Price" />
+                  <TableColumn fx:id="quantityColumn" prefWidth="100.0" text="Quantity" />
+                  <TableColumn fx:id="totalColumn" prefWidth="120.0" text="Total" />
+              </columns>
+               <contextMenu>
+                  <javafx.scene.control.ContextMenu>
+                    <items>
+                      <javafx.scene.control.MenuItem mnemonicParsing="false" onAction="#handleRemoveItem" text="Remove Item" />
+                    </items>
+                  </javafx.scene.control.ContextMenu>
+               </contextMenu>
+            </TableView>
+            <HBox alignment="CENTER_RIGHT" prefHeight="80.0" prefWidth="200.0" spacing="20.0" style="-fx-background-color: #eeeeee;">
+               <children>
+                  <Label text="Total Amount:">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="totalAmountLabel" text="0.00" textFill="#2e7d32">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="checkoutBtn" mnemonicParsing="false" onAction="#handleCheckout" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #4caf50; -fx-text-fill: white;" text="Checkout">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets right="30.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
