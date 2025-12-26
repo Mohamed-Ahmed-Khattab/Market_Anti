@@ -62,6 +62,8 @@
                 <configuration>
                     <source>21</source>
                     <target>21</target>
+<<<<<<< HEAD
+=======
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -69,6 +71,7 @@
                             <version>1.18.42</version>
                         </path>
                     </annotationProcessorPaths>
+>>>>>>> 941b48b7b1e193f66341b671614e093e88d4a0b3
                 </configuration>
             </plugin>
             <plugin>
