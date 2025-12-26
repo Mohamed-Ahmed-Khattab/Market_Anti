@@ -97,6 +97,7 @@ public class EndorsementDAO {
 
         return endorsement;
     }
+
     public List<Endorsement> getAll() {
         List<Endorsement> endorsements = new ArrayList<>();
         String sql = "SELECT * FROM Endorsement ORDER BY startDate DESC";
