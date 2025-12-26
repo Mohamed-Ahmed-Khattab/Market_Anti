@@ -1,56 +1,75 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-/**
- * CartItem entity representing items in a shopping cart
- * Maps to the CartItem table in the database
- */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CartItem {
-    private Integer cartItemID;
-    private Integer cartID;
-    private Integer productID;
-    private Integer quantity;
-    private BigDecimal priceAtAdd;
-    private LocalDateTime addedAt;
+    private Product product;
+    private final int cartItemID; // readOnly
+    private static int lastID = 0;
+    private int quantity;
+    private double unitPrice;
+    private LocalDate expireDate;
 
-    // Constructor without ID for new cart items
-    public CartItem(Integer cartID, Integer productID, Integer quantity, BigDecimal priceAtAdd) {
-        this.cartID = cartID;
-        this.productID = productID;
+    public CartItem(LocalDate expireDate, double unitPrice, int quantity, Product product) {
+        this.cartItemID = ++lastID;
+        this.expireDate = expireDate;
+        this.unitPrice = unitPrice;
         this.quantity = quantity;
-        this.priceAtAdd = priceAtAdd;
-        this.addedAt = LocalDateTime.now();
+        this.product = product;
     }
 
-    /**
-     * Calculate total price for this cart item
-     */
-    public BigDecimal getTotalPrice() {
-        if (quantity != null && priceAtAdd != null) {
-            return priceAtAdd.multiply(new BigDecimal(quantity));
-        }
-        return BigDecimal.ZERO;
+    @Override
+    public String toString() {
+        return "CartItem{id=" + cartItemID + ", product=" + (product != null ? product.getName() : "null") + "}";
     }
 
-    // UML Methods
     public void increaseQuantity(int amount) {
-        if (this.quantity == null)
-            this.quantity = 0;
-        this.quantity += amount;
+        if (amount > 0)
+            this.quantity += amount;
     }
 
     public void decreaseQuantity(int amount) {
-        if (this.quantity != null && this.quantity >= amount) {
+        if (amount > 0 && this.quantity >= amount)
             this.quantity -= amount;
-        }
+    }
+
+    public double calculateTotalPrice() {
+        return quantity * unitPrice;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public int getCartItemID() {
+        return cartItemID;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public void setExpireDate(LocalDate expireDate) {
+        this.expireDate = expireDate;
+    }
+
+    public LocalDate getExpireDate() {
+        return expireDate;
     }
 }

@@ -1,36 +1,27 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-
 /**
  * Employee entity representing staff members
  * Maps to the Employee table in the database
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Employee implements SearchItem {
-    private Integer employeeID;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phoneNumber;
-    private LocalDate hireDate;
-    private Integer departmentID;
-    private String position;
-    private Boolean isManager;
+public class Employee extends Person {
+    private double salary;
+    protected String jobTitle;
+    private java.util.List<String> phoneNumbers;
 
-    // Associations
-    private double salary; // Derived/Associated logic
-    private java.util.List<String> phoneNumbers = new java.util.ArrayList<>();
+    public Employee(String name, String gender, String address, java.time.LocalDate dob, double salary, String jobTitle,
+            java.util.List<String> phoneNumbers) {
+        super(name, gender, address, dob);
+        this.salary = salary;
+        this.jobTitle = jobTitle;
+        this.phoneNumbers = phoneNumbers;
+    }
 
-    // UML Methods
     public void assignDepartment(Department d) {
-        this.departmentID = (d != null) ? d.getDepartmentID() : null;
+        // Association logic to be refined if bidirectional
+        if (d != null) {
+            d.addEmployee(this);
+        }
     }
 
     public void newSalary(double salary) {
@@ -38,16 +29,9 @@ public class Employee implements SearchItem {
     }
 
     public void serveCustomer(Customer c) {
-        System.out.println("Serving customer: " + c.getFullName());
-        c.setAssignedEmployee(this);
-    }
-
-    public void setJobTitle(String title) {
-        this.position = title;
-    }
-
-    public String getJobTitle() {
-        return position;
+        if (c != null) {
+            c.setAssignedEmployee(this);
+        }
     }
 
     public double getSalary() {
@@ -58,42 +42,33 @@ public class Employee implements SearchItem {
         this.salary = salary;
     }
 
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
     public java.util.List<String> getPhoneNumbers() {
         return phoneNumbers;
     }
 
-    public void setPhoneNumbers(java.util.List<String> phones) {
-        this.phoneNumbers = phones;
-    }
-
-    // Constructor without ID for new employees
-    public Employee(String firstName, String lastName, String email, String phoneNumber,
-            LocalDate hireDate, Integer departmentID, String position, Boolean isManager) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.hireDate = hireDate;
-        this.departmentID = departmentID;
-        this.position = position;
-        this.isManager = isManager;
-    }
-
-    /**
-     * Get full name of employee
-     */
-    public String getFullName() {
-        return firstName + " " + lastName;
+    public void setPhoneNumbers(java.util.List<String> phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
     }
 
     @Override
-    public boolean matches(String keyword) {
-        if (keyword == null || keyword.isEmpty())
-            return true;
-        String lowerKey = keyword.toLowerCase();
-        return (firstName != null && firstName.toLowerCase().contains(lowerKey)) ||
-                (lastName != null && lastName.toLowerCase().contains(lowerKey)) ||
-                (email != null && email.toLowerCase().contains(lowerKey)) ||
-                (position != null && position.toLowerCase().contains(lowerKey));
+    public String getRole() {
+        return "Employee";
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "name='" + getName() + '\'' +
+                ", ssn='" + getSsn() + '\'' +
+                ", jobTitle='" + jobTitle + '\'' +
+                '}';
     }
 }

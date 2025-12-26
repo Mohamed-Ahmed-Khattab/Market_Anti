@@ -1,41 +1,54 @@
 package com.example.demo.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CEO {
+public class CEO extends Manager {
     private static CEO uniqueInstance;
-    private List<Manager> departmentManager = new ArrayList<>();
-    private static List<String> ceoLog = new ArrayList<>();
+    private java.util.List<Manager> departmentManager;
 
-    private CEO() {
+    private CEO(String name, String gender, String address, java.time.LocalDate dob, double salary, String jobTitle,
+            java.util.List<String> phoneNumbers) {
+        super(name, gender, address, dob, salary, jobTitle, phoneNumbers);
+        this.departmentManager = new java.util.ArrayList<>();
     }
 
-    public static synchronized CEO getInstance() {
+    public static CEO getInstance(String name, String gender, String address, java.time.LocalDate dob, double salary,
+            String jobTitle, java.util.List<String> phoneNumbers) {
         if (uniqueInstance == null) {
-            uniqueInstance = new CEO();
+            uniqueInstance = new CEO(name, gender, address, dob, salary, jobTitle, phoneNumbers);
         }
         return uniqueInstance;
     }
 
+    // Allow getting instance without params if already created, or handle
+    // initialization logic better
+    // For simplicity based on UML `getInstance(): Manager` (which returns CEO
+    // actually)
+    public static CEO getInstance() {
+        return uniqueInstance;
+    }
+
     public void checkSuppliers() {
-        System.out.println("Checking all supplier statuses...");
+        System.out.println("Checking suppliers...");
     }
 
     public void approveBudget() {
-        System.out.println("Budget Approved.");
+        System.out.println("Approving budget...");
     }
 
-    public void setInfo(String companyVision) {
-        System.out.println("Company Vision set to: " + companyVision);
+    public void setInfo(String vision) {
+        System.out.println("Setting company vision: " + vision);
+        // Logic to store vision
     }
 
-    public void promoteToManager(String ssn, Department dept) {
-        System.out.println("Promoting employee " + ssn + " to manager of " + dept.getDepartmentName());
+    public void promoteToManager(String ssn, Department d) {
+        System.out.println("Promoting employee with SSN " + ssn + " to Manager of " + d.getName());
+        // Logic to promote
     }
 
-    // Getters and Setters
-    public List<Manager> getDepartmentManager() {
+    public java.util.List<Manager> getDepartmentManager() {
         return departmentManager;
     }
 
