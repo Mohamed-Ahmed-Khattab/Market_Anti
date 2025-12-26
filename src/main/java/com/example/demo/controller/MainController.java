@@ -67,7 +67,12 @@ public class MainController implements Initializable {
 
     @FXML
     void handleSalesReports(ActionEvent event) {
-        // Placeholder for report view
+        loadView("report-view.fxml");
+    }
+
+    @FXML
+    void handleSupply(ActionEvent event) {
+        loadView("supplier-order.fxml");
     }
 
     private Object loadView(String fxmlFile) {

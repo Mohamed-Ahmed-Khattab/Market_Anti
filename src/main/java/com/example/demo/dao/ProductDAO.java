@@ -212,4 +212,23 @@ public class ProductDAO {
         }
         return false;
     }
+
+    public List<Product> getProductsBySupplierId(int supplierID) {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM Product WHERE supplierID = ? AND isActive = true";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, supplierID);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                products.add(extractProductFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
 }

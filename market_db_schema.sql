@@ -115,6 +115,7 @@ CREATE TABLE Supplier (
     city VARCHAR(100),
     country VARCHAR(100),
     rating DECIMAL(3, 2) CHECK (rating >= 0 AND rating <= 5),
+    products TEXT, -- Multivalued attribute for products supplied
     
     INDEX idx_name (supplierName),
     INDEX idx_email (email)
