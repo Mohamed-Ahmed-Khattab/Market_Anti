@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.dao.CustomerDAO;
 import com.example.demo.model.Customer;
 import com.example.demo.util.AlertUtil;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

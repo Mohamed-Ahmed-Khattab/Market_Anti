@@ -2,11 +2,8 @@ package com.example.demo.dao;
 
 import com.example.demo.db.DatabaseManager;
 import com.example.demo.model.CEO;
-import com.example.demo.model.Manager;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Data Access Object for CEO entity

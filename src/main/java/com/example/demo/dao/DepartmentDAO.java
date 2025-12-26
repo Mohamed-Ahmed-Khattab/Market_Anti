@@ -5,7 +5,6 @@ import com.example.demo.model.Department;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

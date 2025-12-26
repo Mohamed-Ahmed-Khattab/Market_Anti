@@ -5,13 +5,11 @@ import com.example.demo.model.Product;
 import com.example.demo.model.Supplier;
 import com.example.demo.util.AlertUtil;
 import com.example.demo.util.ValidationUtil;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.util.ResourceBundle;
