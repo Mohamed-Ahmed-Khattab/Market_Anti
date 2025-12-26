@@ -65,15 +65,13 @@ public class DepartmentFormController implements Initializable {
                 locs.add(location);
                 currentDepartment.setLocation(locs);
             } else {
-                // Technically can't update easily without setters?
-                // Department seems to have no setters for Name/Budget based on previous checks?
-                // Wait, I saw setters in previous files?
-                // Assuming setters exist or using constructor.
-                // Refetching Department.java content to be safe?
-                // I'll assume they exist or I can't do anything.
-                // Actually, I can create a NEW object, but DAO update relies on ID.
-                // DAO update returns false anyway. So this part is moot.
-                // Just let it try.
+                // Update existing department using setters
+                currentDepartment.setName(name);
+                currentDepartment.setBudget(budget);
+                List<String> locs = new ArrayList<>();
+                locs.add(location);
+                currentDepartment.setLocation(locs);
+                // departmentID is already set from the loaded department
             }
 
             boolean success;
@@ -87,7 +85,7 @@ public class DepartmentFormController implements Initializable {
                 AlertUtil.showInfo("Success", "Department saved successfully.");
                 closeWindow();
             } else {
-                AlertUtil.showError("Error", "Could not save department (DAO limitation).");
+                AlertUtil.showError("Error", "Could not save department.");
             }
         }
     }

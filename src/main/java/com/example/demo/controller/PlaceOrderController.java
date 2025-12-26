@@ -205,6 +205,12 @@ public class PlaceOrderController {
     @FXML
     void btnPlaceOrderOnAction(ActionEvent event) {
 
+        if (cartList.isEmpty()) {
+            CommonMethod.showAlert("Empty Cart", "Please add items to cart before placing order.",
+                    CustomAlertType.WARNING);
+            return;
+        }
+
         int id = PlaceOrderModel.generateOrderId();
         List<OrderDetailsDTO> orderDetailsDTOList = new ArrayList<>();
 
@@ -227,10 +233,16 @@ public class PlaceOrderController {
             boolean isOrderPlace = PlaceOrderModel.placeOrder(transactionDTO);
 
             if (isOrderPlace) {
+                // Clear the cart after successful order
+                cartList.clear();
+                tblCart.setItems(cartList);
+                lblNetTotal.setText("0.00/=");
+
                 loadId();
-                CommonMethod.showAlert("OK", "order Place !!", CustomAlertType.INFORMATION);
+                CommonMethod.showAlert("SUCCESS", "Order #" + id + " placed successfully!",
+                        CustomAlertType.INFORMATION);
             } else {
-                CommonMethod.showAlert("ERROR", "failed. please rollback the order !!", CustomAlertType.WARNING);
+                CommonMethod.showAlert("ERROR", "Failed to place order. Please try again.", CustomAlertType.WARNING);
             }
 
         } catch (SQLException | ParseException e) {

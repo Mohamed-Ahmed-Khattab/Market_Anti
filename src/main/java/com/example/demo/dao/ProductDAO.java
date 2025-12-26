@@ -148,6 +148,7 @@ public class ProductDAO {
         }
         return products;
     }
+
     public boolean updateStock(int productID, int quantityChange) {
         String sql = "UPDATE Product SET stockQuantity = stockQuantity + ? WHERE productID = ?";
         try (Connection conn = dbManager.getConnection();
@@ -155,6 +156,57 @@ public class ProductDAO {
             stmt.setInt(1, quantityChange);
             stmt.setInt(2, productID);
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Product getByName(String productName) {
+        String sql = "SELECT * FROM Product WHERE productName = ? AND isActive = true";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, productName);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return extractProductFromResultSet(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean createWithSupplier(Product product, int supplierID) {
+        String sql = "INSERT INTO Product (productName, category, price, stockQuantity, supplierID, barcode, sku, isActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, product.getName());
+            stmt.setString(2, "General");
+            stmt.setDouble(3, product.getPrice());
+            stmt.setInt(4, product.getStockQuantity());
+            stmt.setInt(5, supplierID);
+
+            String uniqueId = UUID.randomUUID().toString();
+            stmt.setString(6, uniqueId.substring(0, 12));
+            stmt.setString(7, "SKU-" + uniqueId.substring(0, 8));
+            stmt.setBoolean(8, true);
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        product.setProductID(generatedKeys.getInt(1));
+                    }
+                }
+                return true;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

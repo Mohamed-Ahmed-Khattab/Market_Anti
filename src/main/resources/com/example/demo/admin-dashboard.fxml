@@ -69,7 +69,7 @@
             <Button layoutX="465.0" layoutY="281.0" mnemonicParsing="false" onAction="#supplier" prefHeight="38.0" prefWidth="180.0" styleClass="update-button" text="Supplier" />
             <Button layoutX="28.0" layoutY="525.0" mnemonicParsing="false" onAction="#stock" prefHeight="38.0" prefWidth="180.0" styleClass="update-button" text="Stock" />
             <Button layoutX="243.0" layoutY="525.0" mnemonicParsing="false" onAction="#report" prefHeight="38.0" prefWidth="180.0" styleClass="update-button" text="Reports" />
-            <Button layoutX="465.0" layoutY="525.0" mnemonicParsing="false" onAction="#userManage" prefHeight="38.0" prefWidth="180.0" styleClass="update-button" text="User Manage" />
+            <Button layoutX="465.0" layoutY="525.0" mnemonicParsing="false" onAction="#supplierOrder" prefHeight="38.0" prefWidth="180.0" styleClass="update-button" text="Supply" />
             <ImageView fitHeight="150.0" fitWidth="176.0" layoutX="43.0" layoutY="113.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/transaction.png" />

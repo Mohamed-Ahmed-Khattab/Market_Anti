@@ -70,14 +70,30 @@ public class DepartmentController implements Initializable {
 
     @FXML
     void handleEdit(ActionEvent event) {
-        // Edit unavailable without ID
-        AlertUtil.showWarning("Feature Unavailable", "Editing departments is not supported by current Model (No ID).");
+        Department selected = departmentTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            showDepartmentForm(selected);
+        } else {
+            AlertUtil.showWarning("No Selection", "Please select a department to edit.");
+        }
     }
 
     @FXML
     void handleDelete(ActionEvent event) {
-        // Delete unavailable without ID
-        AlertUtil.showWarning("Feature Unavailable", "Deleting departments is not supported by current Model (No ID).");
+        Department selected = departmentTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            if (AlertUtil.showConfirmation("Delete Department",
+                    "Are you sure you want to delete " + selected.getName() + "?")) {
+                if (departmentDAO.delete(selected.getDepartmentID())) {
+                    loadData();
+                    AlertUtil.showInfo("Success", "Department deleted successfully.");
+                } else {
+                    AlertUtil.showError("Error", "Could not delete department.");
+                }
+            }
+        } else {
+            AlertUtil.showWarning("No Selection", "Please select a department to delete.");
+        }
     }
 
     @FXML

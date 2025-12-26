@@ -20,7 +20,6 @@ import java.util.Optional;
 
 public class AdminDashBoardController {
 
-
     @FXML
     private BorderPane dashboardPane;
 
@@ -37,15 +36,15 @@ public class AdminDashBoardController {
     private TextField userName;
 
     @FXML
-    public void initialize(){
+    public void initialize() {
 
-            User user = SessionManager.getCurrentUser();
-            if (user != null) {
-                userEmail.setText(user.getEmail());
-                userName.setText(user.getFirstName() + " " + user.getLastName());
-                role.setText(user.getUserType().name());
-                password.setText(user.getPassword());
-            }
+        User user = SessionManager.getCurrentUser();
+        if (user != null) {
+            userEmail.setText(user.getEmail());
+            userName.setText(user.getFirstName() + " " + user.getLastName());
+            role.setText(user.getUserType().name());
+            password.setText(user.getPassword());
+        }
     }
 
     public void setLoggedInUser(User user) {
@@ -97,9 +96,15 @@ public class AdminDashBoardController {
 
     }
 
+    @FXML
+    void supplierOrder(ActionEvent event) {
+        loadFullPage("supplier-order");
+    }
+
     private void loadFullPage(String page) {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/org/pos/project/possystem/" + page + ".fxml")));
+            Parent root = FXMLLoader.load(
+                    Objects.requireNonNull(getClass().getResource("/com/example/demo/" + page + ".fxml")));
             Stage stage = (Stage) dashboardPane.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle(capitalize(page));
@@ -114,8 +119,6 @@ public class AdminDashBoardController {
         return str.substring(0, 1).toUpperCase() + str.substring(1).replace("-", " ") + " Page";
     }
 
-
-
     @FXML
     void logOut(ActionEvent event) {
 
@@ -128,7 +131,8 @@ public class AdminDashBoardController {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
 
-                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/org/pos/project/possystem/login-view.fxml")));
+                Parent root = FXMLLoader.load(
+                        Objects.requireNonNull(getClass().getResource("/com/example/demo/login-view.fxml")));
                 Scene scene = new Scene(root);
 
                 Stage stage = (Stage) dashboardPane.getScene().getWindow();
