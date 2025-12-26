@@ -6,19 +6,26 @@ import com.example.demo.model.Product;
 import com.example.demo.model.Supplier;
 import com.example.demo.util.AlertUtil;
 import com.example.demo.util.CommonMethod;
+<<<<<<< HEAD
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+=======
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
+<<<<<<< HEAD
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+=======
+import javafx.scene.control.TextField;
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
 
 import java.net.URL;
 import java.util.List;
@@ -27,7 +34,12 @@ import java.util.ResourceBundle;
 /**
  * Controller for Supplier Order feature.
  * Allows placing orders to suppliers to add stock.
+<<<<<<< HEAD
  * Uses threads to simulate employees processing tasks.
+=======
+ * If product exists, adds quantity to stock.
+ * If product doesn't exist, creates new product with the supplier.
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
  */
 public class SupplierOrderController implements Initializable {
 
@@ -43,6 +55,7 @@ public class SupplierOrderController implements Initializable {
     @FXML
     private TextField priceField;
 
+<<<<<<< HEAD
     @FXML
     private TableView<SupplyItem> tblSupply;
 
@@ -58,10 +71,15 @@ public class SupplierOrderController implements Initializable {
     private final SupplierDAO supplierDAO = new SupplierDAO();
     private final ProductDAO productDAO = new ProductDAO();
     private final ObservableList<SupplyItem> supplyList = FXCollections.observableArrayList();
+=======
+    private final SupplierDAO supplierDAO = new SupplierDAO();
+    private final ProductDAO productDAO = new ProductDAO();
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadSuppliers();
+<<<<<<< HEAD
         setupTable();
     }
 
@@ -70,6 +88,8 @@ public class SupplierOrderController implements Initializable {
         colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         tblSupply.setItems(supplyList);
+=======
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
     }
 
     private void loadSuppliers() {
@@ -77,6 +97,10 @@ public class SupplierOrderController implements Initializable {
         ObservableList<Supplier> observableList = FXCollections.observableArrayList(suppliers);
         supplierComboBox.setItems(observableList);
 
+<<<<<<< HEAD
+=======
+        // Set display to show supplier name
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
         supplierComboBox.setCellFactory(lv -> new javafx.scene.control.ListCell<Supplier>() {
             @Override
             protected void updateItem(Supplier item, boolean empty) {
@@ -94,6 +118,7 @@ public class SupplierOrderController implements Initializable {
     }
 
     @FXML
+<<<<<<< HEAD
     void handleAddToList(ActionEvent event) {
         String name = productNameField.getText().trim();
         String qtyText = quantityField.getText().trim();
@@ -194,12 +219,91 @@ public class SupplierOrderController implements Initializable {
     @FXML
     void handleClearList(ActionEvent event) {
         supplyList.clear();
+=======
+    void handlePlaceOrder(ActionEvent event) {
+        // Validate inputs
+        Supplier selectedSupplier = supplierComboBox.getValue();
+        String productName = productNameField.getText().trim();
+        String quantityText = quantityField.getText().trim();
+        String priceText = priceField.getText().trim();
+
+        if (selectedSupplier == null) {
+            AlertUtil.showWarning("Validation", "Please select a supplier.");
+            return;
+        }
+
+        if (productName.isEmpty()) {
+            AlertUtil.showWarning("Validation", "Please enter a product name.");
+            return;
+        }
+
+        int quantity;
+        try {
+            quantity = Integer.parseInt(quantityText);
+            if (quantity <= 0) {
+                AlertUtil.showWarning("Validation", "Quantity must be a positive number.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            AlertUtil.showWarning("Validation", "Please enter a valid quantity.");
+            return;
+        }
+
+        // Check if product exists
+        Product existingProduct = productDAO.getByName(productName);
+
+        if (existingProduct != null) {
+            // Product exists - add quantity to stock
+            boolean success = productDAO.updateStock(existingProduct.getProductID(), quantity);
+            if (success) {
+                AlertUtil.showInfo("Success",
+                        "Added " + quantity + " units to existing product '" + productName + "'.\n" +
+                                "New stock: " + (existingProduct.getStockQuantity() + quantity));
+                clearFields();
+            } else {
+                AlertUtil.showError("Error", "Could not update stock.");
+            }
+        } else {
+            // Product doesn't exist - create new product with supplier
+            double price;
+            try {
+                price = Double.parseDouble(priceText);
+                if (price <= 0) {
+                    AlertUtil.showWarning("Validation", "Price must be a positive number.");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                AlertUtil.showWarning("Validation", "Please enter a valid price for the new product.");
+                return;
+            }
+
+            Product newProduct = new Product(0, productName, quantity, price);
+            boolean success = productDAO.createWithSupplier(newProduct, selectedSupplier.getSupplierID());
+
+            if (success) {
+                AlertUtil.showInfo("Success",
+                        "Created new product '" + productName + "' with " + quantity + " units.\n" +
+                                "Supplier: " + selectedSupplier.getSupplierName());
+                clearFields();
+            } else {
+                AlertUtil.showError("Error", "Could not create new product.");
+            }
+        }
+    }
+
+    private void clearFields() {
+        productNameField.clear();
+        quantityField.clear();
+        priceField.clear();
+        supplierComboBox.setValue(null);
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
     }
 
     @FXML
     void goBack(ActionEvent event) {
         CommonMethod.goToBack(event, getClass());
     }
+<<<<<<< HEAD
 
     public static class SupplyItem {
         private final SimpleStringProperty productName;
@@ -224,4 +328,6 @@ public class SupplierOrderController implements Initializable {
             return price.get();
         }
     }
+=======
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
 }

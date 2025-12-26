@@ -62,7 +62,11 @@
                   <Insets bottom="5.0" left="10.0" right="10.0" />
                </VBox.margin>
             </Button>
+<<<<<<< HEAD
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSupply" text="Supply Products" textAlignment="LEFT">
+=======
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSupply" text="Supply" textAlignment="LEFT">
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
                <VBox.margin>
                   <Insets bottom="5.0" left="10.0" right="10.0" />
                </VBox.margin>

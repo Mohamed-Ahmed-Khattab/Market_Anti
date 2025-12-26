@@ -212,6 +212,7 @@ public class ProductDAO {
         }
         return false;
     }
+<<<<<<< HEAD
 
     public List<Product> getProductsBySupplierId(int supplierID) {
         List<Product> products = new ArrayList<>();
@@ -231,4 +232,6 @@ public class ProductDAO {
         }
         return products;
     }
+=======
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
 }
