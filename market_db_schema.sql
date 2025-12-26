@@ -206,6 +206,22 @@ CREATE TABLE CartItem (
 ) ENGINE=InnoDB;
 
 -- ============================================
+-- USERS TABLE (Authentication)
+-- ============================================
+CREATE TABLE Users (
+    userID INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    firstName VARCHAR(50),
+    lastName VARCHAR(50),
+    userType ENUM('ADMIN', 'CASHIER') NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    INDEX idx_email (email)
+) ENGINE=InnoDB;
+
+
+-- ============================================
 -- SAMPLE DATA INSERTION
 -- ============================================
 
@@ -307,6 +323,12 @@ INSERT INTO CartItem (cartID, productID, quantity, priceAtAdd) VALUES
 (3, 10, 3, 35.00),
 (4, 6, 4, 30.00),
 (4, 4, 2, 15.00);
+
+-- Insert Users
+INSERT INTO Users (email, password, firstName, lastName, userType) VALUES
+('admin@market.com', 'admin123', 'System', 'Admin', 'ADMIN'),
+('cashier@market.com', 'cashier123', 'John', 'Doe', 'CASHIER');
+
 
 -- ============================================
 -- USEFUL VIEWS
