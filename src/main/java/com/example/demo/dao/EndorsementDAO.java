@@ -97,4 +97,21 @@ public class EndorsementDAO {
 
         return endorsement;
     }
+
+    public List<Endorsement> getAll() {
+        List<Endorsement> endorsements = new ArrayList<>();
+        String sql = "SELECT * FROM Endorsement ORDER BY startDate DESC";
+
+        try (Connection conn = dbManager.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                endorsements.add(extractEndorsementFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return endorsements;
+    }
 }

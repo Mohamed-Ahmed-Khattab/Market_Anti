@@ -1,36 +1,48 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Employee entity representing staff members
  * Maps to the Employee table in the database
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Employee implements SearchItem {
-    private Integer employeeID;
-    private String firstName;
-    private String lastName;
+public class Employee extends Person {
+    private int employeeID;
+    private double salary;
+    protected String jobTitle;
+    private List<String> phoneNumbers;
+
+    // Fields for DAO compatibility
     private String email;
     private String phoneNumber;
     private LocalDate hireDate;
     private Integer departmentID;
-    private String position;
     private Boolean isManager;
 
-    // Associations
-    private double salary; // Derived/Associated logic
-    private java.util.List<String> phoneNumbers = new java.util.ArrayList<>();
+    public Employee() {
+        super();
+        this.phoneNumbers = new ArrayList<>();
+    }
 
-    // UML Methods
+    public Employee(String name, String gender, String address, LocalDate dob, double salary, String jobTitle,
+            List<String> phoneNumbers) {
+        super(name, gender, address, dob);
+        this.salary = salary;
+        this.jobTitle = jobTitle;
+        this.phoneNumbers = phoneNumbers;
+        if (phoneNumbers != null && !phoneNumbers.isEmpty()) {
+            this.phoneNumber = phoneNumbers.get(0);
+        }
+    }
+
     public void assignDepartment(Department d) {
-        this.departmentID = (d != null) ? d.getDepartmentID() : null;
+        // Association logic to be refined if bidirectional
+        if (d != null) {
+            d.addEmployee(this);
+            this.departmentID = d.getId(); // Assuming Department has getId()
+        }
     }
 
     public void newSalary(double salary) {
@@ -38,16 +50,9 @@ public class Employee implements SearchItem {
     }
 
     public void serveCustomer(Customer c) {
-        System.out.println("Serving customer: " + c.getFullName());
-        c.setAssignedEmployee(this);
-    }
-
-    public void setJobTitle(String title) {
-        this.position = title;
-    }
-
-    public String getJobTitle() {
-        return position;
+        if (c != null) {
+            c.setAssignedEmployee(this);
+        }
     }
 
     public double getSalary() {
@@ -58,42 +63,140 @@ public class Employee implements SearchItem {
         this.salary = salary;
     }
 
-    public java.util.List<String> getPhoneNumbers() {
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public List<String> getPhoneNumbers() {
         return phoneNumbers;
     }
 
-    public void setPhoneNumbers(java.util.List<String> phones) {
-        this.phoneNumbers = phones;
+    public void setPhoneNumbers(List<String> phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
+        if (phoneNumbers != null && !phoneNumbers.isEmpty()) {
+            this.phoneNumber = phoneNumbers.get(0);
+        }
     }
 
-    // Constructor without ID for new employees
-    public Employee(String firstName, String lastName, String email, String phoneNumber,
-            LocalDate hireDate, Integer departmentID, String position, Boolean isManager) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    // DAO Compatibility Methods
+
+    public int getEmployeeID() {
+        return employeeID;
+    }
+
+    public void setEmployeeID(int employeeID) {
+        this.employeeID = employeeID;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+        if (this.phoneNumbers == null) {
+            this.phoneNumbers = new ArrayList<>();
+        }
+        if (phoneNumber != null && !this.phoneNumbers.contains(phoneNumber)) {
+            this.phoneNumbers.add(phoneNumber);
+        }
+    }
+
+    public LocalDate getHireDate() {
+        return hireDate;
+    }
+
+    public void setHireDate(LocalDate hireDate) {
         this.hireDate = hireDate;
+    }
+
+    public Integer getDepartmentID() {
+        return departmentID;
+    }
+
+    public void setDepartmentID(Integer departmentID) {
         this.departmentID = departmentID;
-        this.position = position;
+    }
+
+    public String getPosition() {
+        return jobTitle;
+    }
+
+    public void setPosition(String position) {
+        this.jobTitle = position;
+    }
+
+    public Boolean getIsManager() {
+        return isManager;
+    }
+
+    public void setIsManager(Boolean isManager) {
         this.isManager = isManager;
     }
 
-    /**
-     * Get full name of employee
-     */
+    public String getFirstName() {
+        String name = getName();
+        if (name == null)
+            return "";
+        String[] parts = name.split(" ", 2);
+        return parts[0];
+    }
+
+    public void setFirstName(String firstName) {
+        String lastName = getLastName();
+        setName(firstName + (lastName.isEmpty() ? "" : " " + lastName));
+    }
+
+    public String getLastName() {
+        String name = getName();
+        if (name == null)
+            return "";
+        String[] parts = name.split(" ", 2);
+        return parts.length > 1 ? parts[1] : "";
+    }
+
+    public void setLastName(String lastName) {
+        String firstName = getFirstName();
+        setName(firstName + (lastName.isEmpty() ? "" : " " + lastName));
+    }
+
     public String getFullName() {
-        return firstName + " " + lastName;
+        return getName();
+    }
+
+    public String getDepartmentName() {
+        // This would require fetching the department if it's lazy loaded, or just
+        // returning a placeholder if not set
+        // Since we have departmentID mostly, and maybe Department object in Manager.
+        // But Employee has just departmentID integer for DAO mostly.
+        // Let's assume we can try to fetch it or return "Unknown"
+        return "Department " + (departmentID != null ? departmentID : "N/A");
     }
 
     @Override
-    public boolean matches(String keyword) {
-        if (keyword == null || keyword.isEmpty())
-            return true;
-        String lowerKey = keyword.toLowerCase();
-        return (firstName != null && firstName.toLowerCase().contains(lowerKey)) ||
-                (lastName != null && lastName.toLowerCase().contains(lowerKey)) ||
-                (email != null && email.toLowerCase().contains(lowerKey)) ||
-                (position != null && position.toLowerCase().contains(lowerKey));
+    public String getRole() {
+        return "Employee";
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "name='" + getName() + '\'' +
+                ", ssn='" + getSsn() + '\'' +
+                ", jobTitle='" + jobTitle + '\'' +
+                ", id=" + employeeID +
+                '}';
     }
 }

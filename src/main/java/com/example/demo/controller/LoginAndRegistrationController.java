@@ -84,7 +84,6 @@ public class LoginAndRegistrationController {
             loginPane.setVisible(true);
         });
 
-
     }
 
     @FXML
@@ -104,12 +103,12 @@ public class LoginAndRegistrationController {
         try {
             User user = User.builder()
                     .email(getUsername).password(password).build();
-            if(UserModel.login(user)){
+            if (UserModel.login(user)) {
                 SessionManager.setCurrentUser(UserModel.getUserCurrentUser());
                 loadDashboard();
             }
 
-        }catch (UserNotFound e){
+        } catch (UserNotFound e) {
             CommonMethod.showAlert("Error", e.getMessage(), CustomAlertType.WARNING);
         }
 
@@ -117,7 +116,7 @@ public class LoginAndRegistrationController {
 
     private void loadDashboard() {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/pos/project/possystem/admin-dashboard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/admin-dashboard.fxml"));
 
         try {
             Parent parent = loader.load();
@@ -134,10 +133,8 @@ public class LoginAndRegistrationController {
         }
     }
 
-
     @FXML
     void register(ActionEvent event) {
-
 
         String email = regUsernameField.getText();
         String password = regPassword.getText();
@@ -145,7 +142,6 @@ public class LoginAndRegistrationController {
         String firstName = regFirstNameField1.getText();
         String lastName = regLastNameField11.getText();
         UserType userType = roleBox.getValue();
-
 
         if (email.isEmpty() || password.isEmpty() || reEnterPassword.isEmpty() ||
                 firstName.isEmpty() || lastName.isEmpty() || userType == null) {
@@ -163,9 +159,9 @@ public class LoginAndRegistrationController {
 
         User user = null;
 
-        if(userType.equals(UserType.ADMIN)){
+        if (userType.equals(UserType.ADMIN)) {
 
-             user = Admin.builder()
+            user = Admin.builder()
                     .email(email)
                     .password(password)
                     .firstName(firstName)
@@ -175,7 +171,7 @@ public class LoginAndRegistrationController {
 
         } else if (userType.equals(UserType.CASHIER)) {
 
-             user = Cashier.builder()
+            user = Cashier.builder()
                     .email(email)
                     .password(password)
                     .firstName(firstName)
@@ -207,6 +203,5 @@ public class LoginAndRegistrationController {
     void showHidePassword(ActionEvent event) {
 
     }
-
 
 }

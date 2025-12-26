@@ -33,19 +33,15 @@
             </HBox>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                <Button mnemonicParsing="false" onAction="#handleAdd" text="Add Customer" />
                   <Button mnemonicParsing="false" onAction="#handleEdit" text="Edit Selected" />
                   <Button mnemonicParsing="false" onAction="#handleDelete" text="Delete Selected" />
               </items>
             </ToolBar>
             <TableView fx:id="customerTable" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
               <columns>
-                <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
-                <TableColumn fx:id="firstNameColumn" prefWidth="120.0" text="First Name" />
-                  <TableColumn fx:id="lastNameColumn" prefWidth="120.0" text="Last Name" />
-                  <TableColumn fx:id="emailColumn" prefWidth="180.0" text="Email" />
-                  <TableColumn fx:id="phoneColumn" prefWidth="150.0" text="Phone Number" />
-                  <TableColumn fx:id="loyaltyColumn" prefWidth="100.0" text="Loyalty Pts" />
+                 <TableColumn fx:id="idColumn" prefWidth="100.0" text="SSN" />
+                 <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Full Name" />
+
               </columns>
             </TableView>
          </children>

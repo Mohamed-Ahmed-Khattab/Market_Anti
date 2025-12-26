@@ -1,12 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.dao.ProductDAO;
-import com.example.demo.dao.SupplierDAO;
 import com.example.demo.model.Product;
-import com.example.demo.model.Supplier;
 import com.example.demo.util.AlertUtil;
-import com.example.demo.util.ValidationUtil;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,9 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ProductController implements Initializable {
@@ -35,20 +29,18 @@ public class ProductController implements Initializable {
     @FXML
     private TableColumn<Product, String> nameColumn;
     @FXML
-    private TableColumn<Product, String> categoryColumn;
-    @FXML
-    private TableColumn<Product, BigDecimal> priceColumn;
+    private TableColumn<Product, Double> priceColumn;
     @FXML
     private TableColumn<Product, Integer> stockColumn;
-    @FXML
-    private TableColumn<Product, String> supplierColumn;
+
+    // Removed Category, Supplier columns not in Model
+
     @FXML
     private TextField searchField;
     @FXML
-    private ComboBox<String> categoryFilter;
+    private ComboBox<String> categoryFilter; // Kept but might be unused if we can't filter
 
     private final ProductDAO productDAO = new ProductDAO();
-    private final SupplierDAO supplierDAO = new SupplierDAO();
     private ObservableList<Product> productList = FXCollections.observableArrayList();
 
     @Override
@@ -59,23 +51,18 @@ public class ProductController implements Initializable {
 
     private void setupTableColumns() {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("productID"));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
         stockColumn.setCellValueFactory(new PropertyValueFactory<>("stockQuantity"));
-
-        supplierColumn.setCellValueFactory(cellData -> {
-            Integer supplierId = cellData.getValue().getSupplierID();
-            if (supplierId != null) {
-                Supplier supplier = supplierDAO.getById(supplierId);
-                return new SimpleStringProperty(supplier != null ? supplier.getSupplierName() : "Unknown");
-            }
-            return new SimpleStringProperty("-");
-        });
     }
 
     private void loadData() {
         productList.setAll(productDAO.getAll());
+        productTable.setItems(productList);
+    }
+
+    public void showLowStockOnly() {
+        productList.setAll(productDAO.getLowStock());
         productTable.setItems(productList);
     }
 
@@ -99,7 +86,7 @@ public class ProductController implements Initializable {
         Product selected = productTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
             if (AlertUtil.showConfirmation("Delete Product",
-                    "Are you sure you want to delete " + selected.getProductName() + "?")) {
+                    "Are you sure you want to delete " + selected.getName() + "?")) {
                 if (productDAO.delete(selected.getProductID())) {
                     loadData();
                     AlertUtil.showInfo("Success", "Product deleted successfully.");
@@ -114,16 +101,13 @@ public class ProductController implements Initializable {
 
     @FXML
     void handleSearch(ActionEvent event) {
-        // Simple search implementation
         String keyword = searchField.getText().toLowerCase();
         if (keyword.isEmpty()) {
             productTable.setItems(productList);
         } else {
             ObservableList<Product> filtered = FXCollections.observableArrayList();
             for (Product p : productList) {
-                if (p.getProductName().toLowerCase().contains(keyword) ||
-                        p.getCategory().toLowerCase().contains(keyword) ||
-                        p.getSku().toLowerCase().contains(keyword)) {
+                if (p.getName().toLowerCase().contains(keyword)) {
                     filtered.add(p);
                 }
             }

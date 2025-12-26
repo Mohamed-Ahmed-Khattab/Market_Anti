@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,13 +56,12 @@ public class DatabaseManager {
         threadPool.execute(task);
     }
 
-    public synchronized Connection getConnection() {
-        try {
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
-            }
-        } catch (SQLException e) {
-            logger.severe("Connection error: " + e.getMessage());
+    public synchronized Connection getConnection() throws SQLException {
+        if (dbUrl == null) {
+            loadDatabaseProperties();
+        }
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
         }
         return connection;
     }
@@ -76,7 +75,11 @@ public class DatabaseManager {
     }
 
     private void loadDatabaseProperties() {
-        try (FileInputStream in = new FileInputStream("src/main/resources/config.properties")) {
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            if (in == null) {
+                logger.severe("config.properties not found in classpath");
+                return;
+            }
             Properties props = new Properties();
             props.load(in);
             dbUrl = props.getProperty("db.url");

@@ -1,34 +1,48 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.math.BigDecimal;
+public class Supplier {
+    private int supplierID;
+    private static int lastID = 0;
+    private List<Product> products;
+    private String name;
+    private double rating;
+    private boolean active;
 
-/**
- * Supplier entity representing product suppliers
- * Maps to the Supplier table in the database
- */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Supplier implements SearchItem {
-    private Integer supplierID;
-    private String supplierName;
+    // Additional fields for DAO
+    private String supplierName; // Alias for name or specific field
     private String contactPerson;
     private String email;
     private String phoneNumber;
     private String address;
     private String city;
     private String country;
-    private BigDecimal rating;
-    private boolean active = true;
-    private java.util.List<Product> products = new java.util.ArrayList<>();
 
-    // UML Methods
+    public Supplier() {
+        this.supplierID = ++lastID;
+        this.products = new ArrayList<>();
+        this.active = true;
+    }
+
+    public Supplier(String name, double rating) {
+        this.supplierID = ++lastID;
+        this.name = name;
+        this.supplierName = name; // Sync
+        this.rating = rating;
+        this.active = true;
+        this.products = new ArrayList<>();
+    }
+
     public void supplyProduct(Product p, int quantity) {
-        p.updateStock(p.getStockQuantity() + quantity);
+        if (active && p != null) {
+            p.updateStock(p.getStockQuantity() + quantity);
+            if (!products.contains(p)) {
+                products.add(p);
+            }
+            System.out.println("Supplier " + name + " supplied " + quantity + " of " + p.getName());
+        }
     }
 
     public boolean isActive() {
@@ -43,35 +57,95 @@ public class Supplier implements SearchItem {
         this.active = true;
     }
 
-    public java.util.List<Product> getProducts() {
-        return products;
+    public int getSupplierID() {
+        return supplierID;
     }
 
-    public void setProducts(java.util.List<Product> products) {
+    public void setSupplierID(int supplierID) {
+        this.supplierID = supplierID;
+    }
+
+    public void setProducts(List<Product> products) {
         this.products = products;
     }
 
-    // Constructor without ID for new suppliers
-    public Supplier(String supplierName, String contactPerson, String email, String phoneNumber,
-            String address, String city, String country, BigDecimal rating) {
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        this.supplierName = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    // DAO Compatibility Accessors
+
+    public String getSupplierName() {
+        return supplierName != null ? supplierName : name;
+    }
+
+    public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
+        this.name = supplierName;
+    }
+
+    public String getContactPerson() {
+        return contactPerson;
+    }
+
+    public void setContactPerson(String contactPerson) {
         this.contactPerson = contactPerson;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
         this.country = country;
+    }
+
+    public void setRating(double rating) {
         this.rating = rating;
     }
 
-    @Override
-    public boolean matches(String keyword) {
-        if (keyword == null || keyword.isEmpty())
-            return true;
-        String lowerKey = keyword.toLowerCase();
-        return (supplierName != null && supplierName.toLowerCase().contains(lowerKey)) ||
-                (contactPerson != null && contactPerson.toLowerCase().contains(lowerKey)) ||
-                (email != null && email.toLowerCase().contains(lowerKey)) ||
-                (phoneNumber != null && phoneNumber.contains(keyword));
+    public double getRating() {
+        return rating;
     }
 }

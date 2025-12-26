@@ -41,22 +41,34 @@ public class CustomerFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Init logic if needed
+        // Disable fields not supported by the simplified Model
+        emailField.setDisable(true);
+        emailField.setPromptText("Not supported by Model");
+        phoneField.setDisable(true);
+        phoneField.setPromptText("Not supported by Model");
+        cityField.setDisable(true);
+        cityField.setPromptText("Not supported by Model");
+        stateField.setDisable(true);
+        stateField.setPromptText("Not supported by Model");
+        countryField.setDisable(true);
+        countryField.setPromptText("Not supported by Model");
+        zipField.setDisable(true);
+        zipField.setPromptText("Not supported by Model");
+        loyaltyField.setDisable(true);
+        loyaltyField.setPromptText("Not supported by Model");
     }
 
     public void setCustomer(Customer customer) {
         this.currentCustomer = customer;
         if (customer != null) {
-            firstNameField.setText(customer.getFirstName());
-            lastNameField.setText(customer.getLastName());
-            emailField.setText(customer.getEmail());
-            phoneField.setText(customer.getPhoneNumber());
+            // Split name into first/last for display
+            String[] parts = customer.getName().split(" ", 2);
+            firstNameField.setText(parts.length > 0 ? parts[0] : "");
+            lastNameField.setText(parts.length > 1 ? parts[1] : "");
+
             addressField.setText(customer.getAddress());
-            cityField.setText(customer.getCity());
-            stateField.setText(customer.getState());
-            countryField.setText(customer.getCountry());
-            zipField.setText(customer.getZipCode());
-            loyaltyField.setText(String.valueOf(customer.getLoyaltyPoints()));
+
+            // Other fields remain empty/disabled
         }
     }
 
@@ -64,26 +76,19 @@ public class CustomerFormController implements Initializable {
     void handleSave(ActionEvent event) {
         if (validateInput()) {
             boolean isNew = (currentCustomer == null);
+
+            String name = firstNameField.getText() + " " + lastNameField.getText();
+            String address = addressField.getText();
+
             if (isNew) {
-                currentCustomer = new Customer();
+                // Constructor: Name, Gender, Address, DOB, isPremium, Balance
+                currentCustomer = new Customer(name, "Unknown", address, null, false, 0.0);
+            } else {
+                currentCustomer.setName(name);
+                currentCustomer.setAddress(address);
             }
 
-            currentCustomer.setFirstName(firstNameField.getText());
-            currentCustomer.setLastName(lastNameField.getText());
-            currentCustomer.setEmail(emailField.getText());
-            currentCustomer.setPhoneNumber(phoneField.getText());
-            currentCustomer.setAddress(addressField.getText());
-            currentCustomer.setCity(cityField.getText());
-            currentCustomer.setState(stateField.getText());
-            currentCustomer.setCountry(countryField.getText());
-            currentCustomer.setZipCode(zipField.getText());
-
-            try {
-                int points = Integer.parseInt(loyaltyField.getText());
-                currentCustomer.setLoyaltyPoints(points);
-            } catch (NumberFormatException e) {
-                currentCustomer.setLoyaltyPoints(0);
-            }
+            // Note: email/phone etc are ignored as Model doesn't store them.
 
             boolean success;
             if (isNew) {
@@ -96,7 +101,7 @@ public class CustomerFormController implements Initializable {
                 AlertUtil.showInfo("Success", "Customer saved successfully.");
                 closeWindow();
             } else {
-                AlertUtil.showError("Error", "Could not save customer.");
+                AlertUtil.showError("Error", "Could not save customer (DAO implementation limitation).");
             }
         }
     }
@@ -109,10 +114,6 @@ public class CustomerFormController implements Initializable {
     private boolean validateInput() {
         if (ValidationUtil.isEmpty(firstNameField.getText()) || ValidationUtil.isEmpty(lastNameField.getText())) {
             AlertUtil.showWarning("Validation", "Name is required.");
-            return false;
-        }
-        if (!ValidationUtil.isValidEmail(emailField.getText())) {
-            AlertUtil.showWarning("Validation", "Valid Email is required.");
             return false;
         }
         return true;

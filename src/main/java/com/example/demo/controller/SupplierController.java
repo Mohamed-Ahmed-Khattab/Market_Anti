@@ -3,8 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.dao.SupplierDAO;
 import com.example.demo.model.Supplier;
 import com.example.demo.util.AlertUtil;
-import com.example.demo.util.ValidationUtil;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

@@ -1,76 +1,121 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.math.BigDecimal;
+public class Department {
+    private List<Employee> employees;
+    private Manager manager; // Manager Manager
+    private String name;
+    private double budget;
+    private String status;
+    private double revenue;
+    private int departmentID;
+    private List<String> locations;
 
-/**
- * Department entity representing organizational units
- * Maps to the Department table in the database
- */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Department implements SearchItem {
-    private Integer departmentID;
-    private String departmentName;
-    private String location;
-    private BigDecimal budget;
-    private Integer managerID;
+    public Department(double budget, String name, String status) {
+        this.budget = budget;
+        this.name = name;
+        this.status = status;
+        this.employees = new ArrayList<>();
+        this.locations = new ArrayList<>();
+    }
 
-    // Associations from UML
-    private Manager manager;
-    private java.util.List<Employee> employees = new java.util.ArrayList<>();
+    public int getId() {
+        return departmentID;
+    }
 
-    // Business Methods from UML
+    public void setId(int id) {
+        this.departmentID = id;
+    }
+
     public double calculateTotalSalaries() {
-        // Placeholder implementation - in real app would sum employee salaries
-        return 0.0;
+        double total = 0;
+        if (employees != null) {
+            for (Employee e : employees) {
+                total += e.getSalary();
+            }
+        }
+        return total;
     }
 
     public String getManagerName() {
-        return (manager != null) ? "Manager ID: " + manager.getManagerID() : "No Manager";
+        return manager != null ? manager.getName() : "None";
     }
 
     public void addEmployee(Employee e) {
         if (!employees.contains(e)) {
             employees.add(e);
+            e.assignDepartment(this);
         }
     }
 
-    public void setManager(Manager m) {
-        this.manager = m;
-        this.managerID = (m != null) ? m.getManagerID() : null;
+    public int getEmployeeCount() {
+        return employees != null ? employees.size() : 0;
     }
 
-    public int getEmployeeCount() {
-        return employees.size();
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
+
+    // Getters and Setters matching UML
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
+    }
+
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public Manager getManager() {
+        return manager;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setBudget(double budget) {
-        this.budget = BigDecimal.valueOf(budget);
+        this.budget = budget;
     }
 
     public double getBudget() {
-        return (budget != null) ? budget.doubleValue() : 0.0;
+        return budget;
     }
 
-    // Constructor without ID for new departments
-    public Department(String departmentName, String location, BigDecimal budget, Integer managerID) {
-        this.departmentName = departmentName;
-        this.location = location;
-        this.budget = budget;
-        this.managerID = managerID;
+    public String getStatus() {
+        return status;
     }
 
-    @Override
-    public boolean matches(String keyword) {
-        if (keyword == null || keyword.isEmpty())
-            return true;
-        String lowerKey = keyword.toLowerCase();
-        return (departmentName != null && departmentName.toLowerCase().contains(lowerKey)) ||
-                (location != null && location.toLowerCase().contains(lowerKey));
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public double getRevenue() {
+        return revenue;
+    }
+
+    public void setRevenue(double revenue) {
+        this.revenue = revenue;
+    }
+
+    public void setLocation(List<String> locations) {
+        this.locations = locations;
+    }
+
+    public List<String> getLocation() {
+        return locations;
+    }
+
+    public String getDepartmentName() {
+        return name;
+    }
+
+    public int getDepartmentID() {
+        return departmentID;
     }
 }

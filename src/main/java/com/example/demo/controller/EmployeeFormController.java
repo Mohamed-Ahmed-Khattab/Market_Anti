@@ -11,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -76,7 +75,7 @@ public class EmployeeFormController implements Initializable {
 
             if (employee.getDepartmentID() != null) {
                 for (Department d : departmentCombo.getItems()) {
-                    if (d.getDepartmentID().equals(employee.getDepartmentID())) {
+                    if (d.getDepartmentID() == employee.getDepartmentID()) {
                         departmentCombo.setValue(d);
                         break;
                     }

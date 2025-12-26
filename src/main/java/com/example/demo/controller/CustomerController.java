@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.dao.CustomerDAO;
 import com.example.demo.model.Customer;
 import com.example.demo.util.AlertUtil;
-import com.example.demo.util.ValidationUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,7 +18,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class CustomerController implements Initializable {
@@ -27,17 +25,12 @@ public class CustomerController implements Initializable {
     @FXML
     private TableView<Customer> customerTable;
     @FXML
-    private TableColumn<Customer, Integer> idColumn;
+    private TableColumn<Customer, String> idColumn; // Changed to String for SSN
     @FXML
-    private TableColumn<Customer, String> firstNameColumn;
-    @FXML
-    private TableColumn<Customer, String> lastNameColumn;
-    @FXML
-    private TableColumn<Customer, String> emailColumn;
-    @FXML
-    private TableColumn<Customer, String> phoneColumn;
-    @FXML
-    private TableColumn<Customer, Integer> loyaltyColumn;
+    private TableColumn<Customer, String> nameColumn; // Merged First/Last Name
+
+    // Removed Email, Phone, Loyalty columns as they don't exist in Model
+
     @FXML
     private TextField searchField;
 
@@ -51,12 +44,10 @@ public class CustomerController implements Initializable {
     }
 
     private void setupTableColumns() {
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("customerID"));
-        firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-        phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
-        loyaltyColumn.setCellValueFactory(new PropertyValueFactory<>("loyaltyPoints"));
+        // Use SSN as the ID since Model doesn't have numeric ID
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("ssn"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        // Remove other columns setup
     }
 
     private void loadData() {
@@ -84,7 +75,7 @@ public class CustomerController implements Initializable {
         Customer selected = customerTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
             if (AlertUtil.showConfirmation("Delete Customer",
-                    "Are you sure you want to delete " + selected.getFullName() + "?")) {
+                    "Are you sure you want to delete " + selected.getName() + "?")) {
                 if (customerDAO.delete(selected.getCustomerID())) {
                     loadData();
                     AlertUtil.showInfo("Success", "Customer deleted successfully.");
@@ -105,10 +96,7 @@ public class CustomerController implements Initializable {
         } else {
             ObservableList<Customer> filtered = FXCollections.observableArrayList();
             for (Customer c : customerList) {
-                if (c.getFirstName().toLowerCase().contains(keyword) ||
-                        c.getLastName().toLowerCase().contains(keyword) ||
-                        c.getEmail().toLowerCase().contains(keyword) ||
-                        c.getPhoneNumber().contains(keyword)) {
+                if (c.getName().toLowerCase().contains(keyword)) {
                     filtered.add(c);
                 }
             }

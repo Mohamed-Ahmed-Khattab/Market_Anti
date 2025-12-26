@@ -1,15 +1,15 @@
 package com.example.demo.tm;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Data;
+import lombok.experimental.SuperBuilder;
 import com.example.demo.util.UserType;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
+@SuperBuilder
 public class User {
 
     private Integer id;

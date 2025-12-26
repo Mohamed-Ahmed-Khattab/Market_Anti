@@ -10,8 +10,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.math.BigDecimal;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class DepartmentFormController implements Initializable {
@@ -33,9 +34,13 @@ public class DepartmentFormController implements Initializable {
     public void setDepartment(Department department) {
         this.currentDepartment = department;
         if (department != null) {
-            nameField.setText(department.getDepartmentName());
-            locationField.setText(department.getLocation());
-            budgetField.setText(department.getBudget() != null ? department.getBudget().toString() : "");
+            nameField.setText(department.getName());
+
+            if (department.getLocation() != null && !department.getLocation().isEmpty()) {
+                locationField.setText(department.getLocation().get(0));
+            }
+
+            budgetField.setText(String.valueOf(department.getBudget()));
         }
     }
 
@@ -43,19 +48,30 @@ public class DepartmentFormController implements Initializable {
     void handleSave(ActionEvent event) {
         if (validateInput()) {
             boolean isNew = (currentDepartment == null);
-            if (isNew) {
-                currentDepartment = new Department();
+
+            String name = nameField.getText();
+            String location = locationField.getText();
+            double budget = 0.0;
+            try {
+                budget = Double.parseDouble(budgetField.getText());
+            } catch (NumberFormatException e) {
+                // Ignore
             }
 
-            currentDepartment.setDepartmentName(nameField.getText());
-            currentDepartment.setLocation(locationField.getText());
-
-            try {
-                if (!budgetField.getText().isEmpty()) {
-                    currentDepartment.setBudget(new BigDecimal(budgetField.getText()));
-                }
-            } catch (NumberFormatException e) {
-                currentDepartment.setBudget(BigDecimal.ZERO);
+            if (isNew) {
+                // Constructor: double budget, String name, String status
+                currentDepartment = new Department(budget, name, "Active");
+                List<String> locs = new ArrayList<>();
+                locs.add(location);
+                currentDepartment.setLocation(locs);
+            } else {
+                // Update existing department using setters
+                currentDepartment.setName(name);
+                currentDepartment.setBudget(budget);
+                List<String> locs = new ArrayList<>();
+                locs.add(location);
+                currentDepartment.setLocation(locs);
+                // departmentID is already set from the loaded department
             }
 
             boolean success;

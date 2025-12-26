@@ -30,9 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 public class PlaceOrderController {
-
 
     @FXML
     private ComboBox<String> cmbItemCode;
@@ -87,8 +85,7 @@ public class PlaceOrderController {
 
     ObservableList<Cart> cartList = FXCollections.observableArrayList();
 
-
-    public void initialize(){
+    public void initialize() {
 
         loadDateAndTime();
         loadProductIDs();
@@ -100,10 +97,10 @@ public class PlaceOrderController {
         colUnitPrice.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
         colTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
 
-        cmbItemCode.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> setDataForLabels());
+        cmbItemCode.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> setDataForLabels());
 
     }
-
 
     private void loadId() {
 
@@ -112,25 +109,25 @@ public class PlaceOrderController {
 
     }
 
-    public void setDataForLabels(){
+    public void setDataForLabels() {
 
         ProductDTO productDTO = ProductModel.getProductByID(Integer.parseInt(cmbItemCode.getValue()));
 
         ProductStockDTO productStockDTO = ProductStockModel.getStockDetails(Integer.parseInt(cmbItemCode.getValue()));
 
-        if(productStockDTO != null){
+        if (productStockDTO != null) {
             getPName.setText(productDTO.getName());
-            getPPrice.setText("Rs. " + productDTO.getUnitPrice());;
+            getPPrice.setText("Rs. " + productDTO.getUnitPrice());
+            ;
             getPQ.setText(String.valueOf(productStockDTO.getQuantity()));
             getpDes.setText(productDTO.getDescription());
-        }else {
-            CommonMethod.showAlert("Stock Status","Not Available Stock", CustomAlertType.INFORMATION);
+        } else {
+            CommonMethod.showAlert("Stock Status", "Not Available Stock", CustomAlertType.INFORMATION);
         }
     }
 
     private void loadProductIDs() {
         ObservableList<ProductDTO> allProducts = FXCollections.observableArrayList(ProductModel.getAllProducts());
-
 
         ObservableList<String> ids = FXCollections.observableArrayList();
 
@@ -140,8 +137,7 @@ public class PlaceOrderController {
         cmbItemCode.setItems(ids);
     }
 
-
-    private void loadDateAndTime(){
+    private void loadDateAndTime() {
 
         // Set Date
         Date date = new Date();
@@ -152,11 +148,9 @@ public class PlaceOrderController {
         Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, e -> {
             LocalTime time = LocalTime.now();
             lblTime.setText(
-                    time.getHour() + " : " + time.getMinute() + " : " + time.getSecond()
-            );
+                    time.getHour() + " : " + time.getMinute() + " : " + time.getSecond());
         }),
-                new KeyFrame(Duration.seconds(1))
-        );
+                new KeyFrame(Duration.seconds(1)));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
@@ -185,7 +179,7 @@ public class PlaceOrderController {
         double qtyStock = Double.parseDouble(getPQ.getText());
 
         if (qtyStock < qty) {
-            CommonMethod.showAlert("Invalid QTY","Not Available QTY", CustomAlertType.WARNING);
+            CommonMethod.showAlert("Invalid QTY", "Not Available QTY", CustomAlertType.WARNING);
             return;
         }
 
@@ -204,26 +198,31 @@ public class PlaceOrderController {
         cartList.clear();
         tblCart.setItems(cartList);
         lblNetTotal.setText("0.00/=");
-        CommonMethod.showAlert("SUCCESS","Cart cleared successfully!", CustomAlertType.INFORMATION);
+        CommonMethod.showAlert("SUCCESS", "Cart cleared successfully!", CustomAlertType.INFORMATION);
         initialize();
     }
 
     @FXML
     void btnPlaceOrderOnAction(ActionEvent event) {
 
+        if (cartList.isEmpty()) {
+            CommonMethod.showAlert("Empty Cart", "Please add items to cart before placing order.",
+                    CustomAlertType.WARNING);
+            return;
+        }
+
         int id = PlaceOrderModel.generateOrderId();
         List<OrderDetailsDTO> orderDetailsDTOList = new ArrayList<>();
 
-        for (Cart cart : cartList){
+        for (Cart cart : cartList) {
             int productId = cart.getItemCode();
             double qty = cart.getQty();
             orderDetailsDTOList.add(
                     OrderDetailsDTO.builder()
                             .transactionId(id)
-                            .prductId(productId)
+                            .productId(productId)
                             .qty((int) qty)
-                            .build()
-            );
+                            .build());
         }
         try {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -234,14 +233,19 @@ public class PlaceOrderController {
             boolean isOrderPlace = PlaceOrderModel.placeOrder(transactionDTO);
 
             if (isOrderPlace) {
+                // Clear the cart after successful order
+                cartList.clear();
+                tblCart.setItems(cartList);
+                lblNetTotal.setText("0.00/=");
+
                 loadId();
-                CommonMethod.showAlert("OK","order Place !!", CustomAlertType.INFORMATION);
+                CommonMethod.showAlert("SUCCESS", "Order #" + id + " placed successfully!",
+                        CustomAlertType.INFORMATION);
             } else {
-                CommonMethod.showAlert("ERROR","failed. please rollback the order !!", CustomAlertType.WARNING);
+                CommonMethod.showAlert("ERROR", "Failed to place order. Please try again.", CustomAlertType.WARNING);
             }
 
-
-        }catch (SQLException | ParseException e) {
+        } catch (SQLException | ParseException e) {
             throw new RuntimeException(e);
         }
 
@@ -255,43 +259,40 @@ public class PlaceOrderController {
         try {
             List<OrderDetailsDTO> orderDetailsDTOList = PlaceOrderModel.searchOrderById(orderId);
 
-            if(orderDetailsDTOList.isEmpty()){
-                CommonMethod.showAlert("Error","Failed to search order", CustomAlertType.ERROR);
+            if (orderDetailsDTOList.isEmpty()) {
+                CommonMethod.showAlert("Error", "Failed to search order", CustomAlertType.ERROR);
                 return;
             }
 
             ObservableList<Cart> searchResultList = FXCollections.observableArrayList();
 
             for (OrderDetailsDTO orderDetail : orderDetailsDTOList) {
-                ProductDTO product = ProductModel.getProductByID(orderDetail.getPrductId());
+                ProductDTO product = ProductModel.getProductByID(orderDetail.getProductId());
 
                 double total = product.getUnitPrice() * orderDetail.getQty();
 
                 searchResultList.add(
                         Cart.builder()
-                                .itemCode(orderDetail.getPrductId())
+                                .itemCode(orderDetail.getProductId())
                                 .name(product.getName())
                                 .qty(orderDetail.getQty())
                                 .unitPrice(product.getUnitPrice())
                                 .total(total)
-                                .build()
-                );
+                                .build());
             }
 
             tblCart.setItems(searchResultList);
 
-        }catch (SQLException e) {
-            CommonMethod.showAlert("Error","Failed to search order", CustomAlertType.ERROR);
+        } catch (SQLException e) {
+            CommonMethod.showAlert("Error", "Failed to search order", CustomAlertType.ERROR);
         }
 
     }
 
-
     @FXML
     void goBack(ActionEvent event) {
 
-        CommonMethod.goToBack(event,getClass());
-
+        CommonMethod.goToBack(event, getClass());
 
     }
 }

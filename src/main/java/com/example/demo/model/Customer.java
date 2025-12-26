@@ -1,84 +1,91 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.time.LocalDateTime;
-
-/**
- * Customer entity representing customers
- * Maps to the Customer table in the database
- */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Customer implements SearchItem {
-    private Integer customerID;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phoneNumber;
-    private String address;
-    private String city;
-    private String state;
-    private String zipCode;
-    private String country;
-    private LocalDateTime registrationDate;
-    private Integer loyaltyPoints;
-
-    // Associations
-    private java.util.List<Cart> orderHistory = new java.util.ArrayList<>();
+public class Customer extends Person {
+    private List<Cart> orderHistory;
     private Cart currentCart;
     private Employee assignedEmployee;
     private boolean isPremium;
     private double balance;
 
-    // UML Methods
-    public void addToCart(Product p, int qty) {
+    public Customer(String name, String gender, String address, LocalDate dob, boolean isPremium, double balance) {
+        super(name, gender, address, dob);
+        this.isPremium = isPremium;
+        this.balance = balance;
+        this.orderHistory = new ArrayList<>();
+        this.currentCart = new Cart();
+    }
+
+    // Default constructor for unknown maybe?
+    public Customer(String name) {
+        super(name, "Unknown", "Unknown", null);
+        this.isPremium = false;
+        this.balance = 0;
+        this.orderHistory = new ArrayList<>();
+        this.currentCart = new Cart();
+    }
+
+    public void addToCart(CartItem item) {
         if (currentCart == null)
             createCart();
-        // Logic to add to currentCart would go here
-        // But since CartItem needs ID matching, this is usually controller logic.
-        // We will add stub for UML compliance.
-        System.out.println("Added " + p.getProductName() + " to cart.");
-    }
-
-    public void createCart() {
-        this.currentCart = new Cart(this.customerID, "active");
-    }
-
-    public void checkout() {
-        if (currentCart != null) {
-            currentCart.checkout();
-            orderHistory.add(currentCart);
-            currentCart = null;
-        }
+        currentCart.addItem(item);
     }
 
     public void removeFromCart(CartItem item) {
-        if (currentCart != null)
+        if (currentCart != null) {
             currentCart.removeItem(item);
+        }
+    }
+
+    public void createCart() {
+        this.currentCart = new Cart();
+        this.currentCart.setStatus("Active");
     }
 
     public boolean isUnknown() {
-        return this.customerID == null;
+        return "Unknown".equals(getName());
+    }
+
+    public void checkout() {
+        if (currentCart != null && !currentCart.isEmpty()) {
+            double total = currentCart.calculateTotalPrice();
+            if (balance >= total) {
+                balance -= total;
+                currentCart.setStatus("Completed");
+                orderHistory.add(currentCart);
+                createCart(); // New empty cart
+                System.out.println("Checkout successful. Remaining balance: " + balance);
+            } else {
+                System.out.println("Insufficient balance.");
+            }
+        }
     }
 
     public void setAssignedEmployee(Employee e) {
         this.assignedEmployee = e;
     }
 
-    public java.util.List<Cart> getOrderHistory() {
+    public Employee getAssignedEmployee() {
+        return assignedEmployee;
+    }
+
+    public List<Cart> getOrderHistory() {
         return orderHistory;
+    }
+
+    public void setOrderHistory(List<Cart> orderHistory) {
+        this.orderHistory = orderHistory;
     }
 
     public Cart getCurrentCart() {
         return currentCart;
     }
 
-    public Employee getAssignedEmployee() {
-        return assignedEmployee;
+    public void setCurrentCart(Cart currentCart) {
+        this.currentCart = currentCart;
     }
 
     public boolean isPremium() {
@@ -97,37 +104,22 @@ public class Customer implements SearchItem {
         this.balance = balance;
     }
 
-    // Constructor without ID for new customers
-    public Customer(String firstName, String lastName, String email, String phoneNumber,
-            String address, String city, String state, String zipCode, String country) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.city = city;
-        this.state = state;
-        this.zipCode = zipCode;
-        this.country = country;
-        this.registrationDate = LocalDateTime.now();
-        this.loyaltyPoints = 0;
-    }
-
-    /**
-     * Get full name of customer
-     */
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
-
     @Override
-    public boolean matches(String keyword) {
-        if (keyword == null || keyword.isEmpty())
-            return true;
-        String lowerKey = keyword.toLowerCase();
-        return (firstName != null && firstName.toLowerCase().contains(lowerKey)) ||
-                (lastName != null && lastName.toLowerCase().contains(lowerKey)) ||
-                (email != null && email.toLowerCase().contains(lowerKey)) ||
-                (phoneNumber != null && phoneNumber.contains(keyword));
+    public String getRole() {
+        return "Customer";
+    }
+
+    public String getFullName() {
+        return getName();
+    }
+
+    private int customerID;
+
+    public int getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(int id) {
+        this.customerID = id;
     }
 }
