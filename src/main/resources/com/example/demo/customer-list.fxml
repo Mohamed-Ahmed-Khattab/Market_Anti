@@ -33,7 +33,6 @@
             </HBox>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                <Button mnemonicParsing="false" onAction="#handleAdd" text="Add Customer" />
                   <Button mnemonicParsing="false" onAction="#handleEdit" text="Edit Selected" />
                   <Button mnemonicParsing="false" onAction="#handleDelete" text="Delete Selected" />
               </items>

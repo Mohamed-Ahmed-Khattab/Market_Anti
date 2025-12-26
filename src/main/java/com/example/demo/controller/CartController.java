@@ -217,8 +217,8 @@ public class CartController implements Initializable {
                 productDAO.updateStock(item.getProductID(), -item.getQuantity());
             }
 
-            // Limit simplified: Just close the cart
-            cartDAO.updateStatus(currentCart.getCartID(), "completed");
+            // Mark cart as checked_out (for sales report)
+            cartDAO.updateStatus(currentCart.getCartID(), "checked_out");
 
             // Add loyalty points (1 point per $10 spent)
             BigDecimal total = cartItemDAO.getCartTotal(currentCart.getCartID());

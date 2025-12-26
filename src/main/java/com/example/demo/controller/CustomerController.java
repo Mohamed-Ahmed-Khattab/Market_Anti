@@ -76,17 +76,12 @@ public class CustomerController implements Initializable {
         if (selected != null) {
             if (AlertUtil.showConfirmation("Delete Customer",
                     "Are you sure you want to delete " + selected.getName() + "?")) {
-                // Warning: DAO.delete requires int ID, but Model doesn't have it.
-                // We cannot delete reliably without ID.
-                AlertUtil.showError("Error", "Deletion is not supported with the current Model (No ID field).");
-                /*
-                 * if (customerDAO.delete(selected.getCustomerID())) {
-                 * loadData();
-                 * AlertUtil.showInfo("Success", "Customer deleted successfully.");
-                 * } else {
-                 * AlertUtil.showError("Error", "Could not delete customer.");
-                 * }
-                 */
+                if (customerDAO.delete(selected.getCustomerID())) {
+                    loadData();
+                    AlertUtil.showInfo("Success", "Customer deleted successfully.");
+                } else {
+                    AlertUtil.showError("Error", "Could not delete customer.");
+                }
             }
         } else {
             AlertUtil.showWarning("No Selection", "Please select a customer to delete.");

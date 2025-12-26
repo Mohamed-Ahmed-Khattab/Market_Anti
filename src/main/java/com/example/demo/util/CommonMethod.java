@@ -13,8 +13,7 @@ import java.util.Objects;
 
 public final class CommonMethod {
 
-
-    private static final String ADMIN_DASHBOARD_FXML = "/org/pos/project/possystem/admin-dashboard.fxml";
+    private static final String ADMIN_DASHBOARD_FXML = "/com/example/demo/admin-dashboard.fxml";
 
     private CommonMethod() {
     }

@@ -85,10 +85,25 @@ public class DepartmentDAO {
     }
 
     public boolean update(Department department) {
-        // Cannot update easily without ID in Model.
-        // Assuming we rely on Name uniqueness or pass ID separately from Controller.
-        // Given constraint: "Edit controller to match [model]", we can't easily fix DAO
-        // update.
+        String sql = "UPDATE Department SET departmentName = ?, location = ?, budget = ? WHERE departmentID = ?";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, department.getName());
+
+            String loc = "";
+            if (department.getLocation() != null && !department.getLocation().isEmpty()) {
+                loc = department.getLocation().get(0);
+            }
+            stmt.setString(2, loc);
+            stmt.setDouble(3, department.getBudget());
+            stmt.setInt(4, department.getDepartmentID());
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
@@ -113,6 +128,9 @@ public class DepartmentDAO {
 
         // Constructor: double budget, String name, String status
         Department dept = new Department(budget, name, "Active");
+
+        // Set the departmentID from database for edit/delete operations
+        dept.setId(rs.getInt("departmentID"));
 
         if (location != null) {
             List<String> locs = new ArrayList<>();

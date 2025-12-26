@@ -92,13 +92,21 @@ public class CustomerDAO {
     }
 
     public boolean update(Customer customer) {
-        // We can't easily update by ID if the model doesn't store the ID.
-        // Assuming the Controller tracks the ID separately or we assume SSN maps to it?
-        // This is tricky. simpler model = harder updates.
-        // I will try to update based on Name? No, not unique.
-        // Let's assume for now we can't update without an ID in the model.
-        // OR, we assume the SSN holds the ID? "SSN-1001".
-        // Let's try to extract ID from SSN if possible, or just fail gracefully.
+        String sql = "UPDATE Customer SET firstName = ?, lastName = ?, address = ? WHERE customerID = ?";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String[] names = splitName(customer.getName());
+            stmt.setString(1, names[0]);
+            stmt.setString(2, names[1]);
+            stmt.setString(3, customer.getAddress());
+            stmt.setInt(4, customer.getCustomerID());
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
@@ -133,9 +141,8 @@ public class CustomerDAO {
                 0.0 // Balance default
         );
 
-        // If we want to store ID, we can't. Model doesn't have it.
-        // Maybe we store it in SSN?
-        // customer.setSsn("ID:" + rs.getInt("customerID"));
+        // Set the customerID from database for edit/delete operations
+        customer.setCustomerID(rs.getInt("customerID"));
 
         return customer;
     }
@@ -148,6 +155,7 @@ public class CustomerDAO {
             return new String[] { parts[0], "" };
         return parts;
     }
+
     public boolean updateLoyaltyPoints(int customerID, int points) {
         String sql = "UPDATE Customer SET loyaltyPoints = loyaltyPoints + ? WHERE customerID = ?";
         try (Connection conn = dbManager.getConnection();
