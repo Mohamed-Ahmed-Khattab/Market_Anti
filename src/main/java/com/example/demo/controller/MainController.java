@@ -59,8 +59,10 @@ public class MainController implements Initializable {
 
     @FXML
     void handleLowHealthProducts(ActionEvent event) {
-        // Pass filter parameter normally or handle via controller initialization
-        loadView("product-list.fxml");
+        Object controller = loadView("product-list.fxml");
+        if (controller instanceof ProductController) {
+            ((ProductController) controller).showLowStockOnly();
+        }
     }
 
     @FXML
@@ -68,7 +70,7 @@ public class MainController implements Initializable {
         // Placeholder for report view
     }
 
-    private void loadView(String fxmlFile) {
+    private Object loadView(String fxmlFile) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/" + fxmlFile));
             Parent view = loader.load();
@@ -82,9 +84,11 @@ public class MainController implements Initializable {
             AnchorPane.setRightAnchor(view, 0.0);
 
             contentArea.getChildren().add(view);
+            return loader.getController();
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Could not load view: " + fxmlFile);
+            return null;
         }
     }
 }

@@ -61,6 +61,11 @@ public class ProductController implements Initializable {
         productTable.setItems(productList);
     }
 
+    public void showLowStockOnly() {
+        productList.setAll(productDAO.getLowStock());
+        productTable.setItems(productList);
+    }
+
     @FXML
     void handleAdd(ActionEvent event) {
         showProductForm(null);
