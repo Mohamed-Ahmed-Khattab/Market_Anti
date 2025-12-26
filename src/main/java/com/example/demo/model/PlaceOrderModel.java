@@ -20,7 +20,7 @@ public class PlaceOrderModel {
         // For now, since we don't have one, we simulate success and update stock.
         com.example.demo.dao.ProductDAO productDAO = new com.example.demo.dao.ProductDAO();
         for (com.example.demo.dto.OrderDetailsDTO details : transactionDTO.getOrderDetailList()) {
-            productDAO.updateStock(details.getPrductId(), -details.getQty());
+            productDAO.updateStock(details.getProductId(), -details.getQty());
         }
         return true;
     }
