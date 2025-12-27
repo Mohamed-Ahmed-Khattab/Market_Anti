@@ -126,6 +126,30 @@ public class CartDAO {
         return false;
     }
 
+    public double getTotalSalesRevenue(java.time.LocalDate sinceDate) {
+        String sql = """
+                    SELECT SUM(ci.quantity * ci.priceAtAdd) as grandTotal
+                    FROM CartItem ci
+                    JOIN Cart c ON ci.cartID = c.cartID
+                    WHERE (c.status = 'checked_out' OR c.status = 'completed')
+                    AND c.updatedAt >= ?
+                """;
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDate(1, Date.valueOf(sinceDate));
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getDouble("grandTotal");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
     private Cart extractCartFromResultSet(ResultSet rs) throws SQLException {
         Cart cart = new Cart();
         cart.setCartID(rs.getInt("cartID"));

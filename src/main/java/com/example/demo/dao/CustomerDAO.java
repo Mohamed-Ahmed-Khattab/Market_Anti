@@ -20,7 +20,7 @@ public class CustomerDAO {
     }
 
     public boolean create(Customer customer) {
-        String sql = "INSERT INTO Customer (firstName, lastName, email, phoneNumber, address, loyaltyPoints) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Customer (firstName, lastName, email, phoneNumber, address, city, state, zipCode, country, loyaltyPoints, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbManager.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -28,24 +28,22 @@ public class CustomerDAO {
             String[] names = splitName(customer.getName());
             stmt.setString(1, names[0]);
             stmt.setString(2, names[1]);
-            // Generate a unique dummy email since Model doesn't have it but DB requires
-            // UNIQUE NOT NULL
-            stmt.setString(3, "user_" + UUID.randomUUID().toString().substring(0, 8) + "@placeholder.com");
-            stmt.setString(4, "N/A"); // Phone is not in model, nullable in DB
+            stmt.setString(3, customer.getEmail());
+            stmt.setString(4, customer.getPhoneNumber());
             stmt.setString(5, customer.getAddress());
-            stmt.setInt(6, 0); // No loyalty points in model
+            stmt.setString(6, customer.getCity());
+            stmt.setString(7, customer.getState());
+            stmt.setString(8, customer.getZipCode());
+            stmt.setString(9, customer.getCountry() != null ? customer.getCountry() : "Egypt");
+            stmt.setInt(10, customer.getLoyaltyPoints());
+            stmt.setString(11, customer.getPassword());
 
             int affectedRows = stmt.executeUpdate();
 
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        // Customer has no setID method? It inherits from Person, check if it has a
-                        // setter for SSN or ID?
-                        // Person has 'ssn' (string) and 'lastSSN'. No integer ID.
-                        // We might lose the ID here unless we map it to something.
-                        // For now, we proceed. Usage of ID in controller might need to change.
-                        // customer.setCustomerID(generatedKeys.getInt(1));
+                        customer.setCustomerID(generatedKeys.getInt(1));
                     }
                 }
                 return true;
@@ -92,7 +90,7 @@ public class CustomerDAO {
     }
 
     public boolean update(Customer customer) {
-        String sql = "UPDATE Customer SET firstName = ?, lastName = ?, address = ? WHERE customerID = ?";
+        String sql = "UPDATE Customer SET firstName = ?, lastName = ?, email = ?, phoneNumber = ?, address = ?, city = ?, state = ?, zipCode = ?, country = ?, loyaltyPoints = ?, password = ? WHERE customerID = ?";
 
         try (Connection conn = dbManager.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -100,8 +98,16 @@ public class CustomerDAO {
             String[] names = splitName(customer.getName());
             stmt.setString(1, names[0]);
             stmt.setString(2, names[1]);
-            stmt.setString(3, customer.getAddress());
-            stmt.setInt(4, customer.getCustomerID());
+            stmt.setString(3, customer.getEmail());
+            stmt.setString(4, customer.getPhoneNumber());
+            stmt.setString(5, customer.getAddress());
+            stmt.setString(6, customer.getCity());
+            stmt.setString(7, customer.getState());
+            stmt.setString(8, customer.getZipCode());
+            stmt.setString(9, customer.getCountry());
+            stmt.setInt(10, customer.getLoyaltyPoints());
+            stmt.setString(11, customer.getPassword());
+            stmt.setInt(12, customer.getCustomerID());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -128,21 +134,18 @@ public class CustomerDAO {
         String firstName = rs.getString("firstName");
         String lastName = rs.getString("lastName");
         String name = (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
-        String address = rs.getString("address");
 
-        // Constructor: Name, Gender, Address, DOB, isPremium, Balance
-        // We infer default values for missing data
-        Customer customer = new Customer(
-                name.trim(),
-                "Unknown", // Gender not in DB
-                address,
-                null, // DOB not in DB
-                false, // isPremium default
-                0.0 // Balance default
-        );
-
-        // Set the customerID from database for edit/delete operations
+        Customer customer = new Customer(name.trim());
         customer.setCustomerID(rs.getInt("customerID"));
+        customer.setEmail(rs.getString("email"));
+        customer.setPhoneNumber(rs.getString("phoneNumber"));
+        customer.setAddress(rs.getString("address"));
+        customer.setCity(rs.getString("city"));
+        customer.setState(rs.getString("state"));
+        customer.setZipCode(rs.getString("zipCode"));
+        customer.setCountry(rs.getString("country"));
+        customer.setLoyaltyPoints(rs.getInt("loyaltyPoints"));
+        customer.setPassword(rs.getString("password"));
 
         return customer;
     }

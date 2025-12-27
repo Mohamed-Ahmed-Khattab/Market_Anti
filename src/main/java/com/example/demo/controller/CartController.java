@@ -7,8 +7,10 @@ import com.example.demo.dao.ProductDAO;
 import com.example.demo.model.Cart;
 import com.example.demo.model.CartItem;
 import com.example.demo.model.Customer;
+import com.example.demo.model.Manager;
 import com.example.demo.model.Product;
 import com.example.demo.util.AlertUtil;
+import com.example.demo.util.DiscountedProduct;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -58,8 +60,21 @@ public class CartController implements Initializable {
     private Cart currentCart;
     private ObservableList<CartItem> cartItems = FXCollections.observableArrayList();
 
+    // Tracks the most sold product with 5% discount (determined by market trend
+    // analysis)
+    private DiscountedProduct discountedProduct;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Analyze market trends to find the most sold product and apply 5% discount
+        Manager manager = new Manager();
+        discountedProduct = manager.analyzeMarketTrends();
+        if (discountedProduct != null) {
+            System.out.println("Discounted product: " + discountedProduct.getProductName() +
+                    " - Original: $" + discountedProduct.getOriginalPrice() +
+                    " -> Discounted: $" + String.format("%.2f", discountedProduct.getDiscountedPrice()));
+        }
+
         setupTable();
         loadCustomers();
         loadProducts();
@@ -106,7 +121,17 @@ public class CartController implements Initializable {
         productCombo.setConverter(new StringConverter<>() {
             @Override
             public String toString(Product p) {
-                return p != null ? p.getProductName() + " ($" + p.getPrice() + ")" : "";
+                if (p == null)
+                    return "";
+
+                // Check if this is the discounted product (most sold)
+                if (discountedProduct != null && p.getProductID() == discountedProduct.getProductID()) {
+                    return String.format("%s ($%.2f -> $%.2f - 5%% OFF!)",
+                            p.getProductName(),
+                            discountedProduct.getOriginalPrice(),
+                            discountedProduct.getDiscountedPrice());
+                }
+                return p.getProductName() + " ($" + p.getPrice() + ")";
             }
 
             @Override
@@ -182,7 +207,16 @@ public class CartController implements Initializable {
                 newItem.setCartID(currentCart.getCartID());
                 newItem.setProductID(product.getProductID());
                 newItem.setQuantity(qty);
-                newItem.setPriceAtAdd(product.getPrice());
+
+                // Apply discounted price if this is the most sold product
+                double priceToUse = product.getPrice();
+                if (discountedProduct != null && product.getProductID() == discountedProduct.getProductID()) {
+                    priceToUse = discountedProduct.getDiscountedPrice();
+                    System.out.println("Applied 5% discount to " + product.getProductName() +
+                            ": $" + product.getPrice() + " -> $" + String.format("%.2f", priceToUse));
+                }
+
+                newItem.setPriceAtAdd(priceToUse);
                 cartItemDAO.create(newItem);
             }
 

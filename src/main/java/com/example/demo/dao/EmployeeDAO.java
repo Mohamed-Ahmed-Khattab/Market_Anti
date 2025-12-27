@@ -22,7 +22,7 @@ public class EmployeeDAO {
      * Create a new employee
      */
     public boolean create(Employee employee) {
-        String sql = "INSERT INTO Employee (firstName, lastName, email, phoneNumber, hireDate, departmentID, position, isManager) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Employee (firstName, lastName, email, phoneNumber, hireDate, departmentID, position, isManager, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbManager.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -41,6 +41,7 @@ public class EmployeeDAO {
 
             stmt.setString(7, employee.getPosition());
             stmt.setBoolean(8, employee.getIsManager() != null ? employee.getIsManager() : false);
+            stmt.setString(9, employee.getPassword());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -125,7 +126,7 @@ public class EmployeeDAO {
      * Update employee
      */
     public boolean update(Employee employee) {
-        String sql = "UPDATE Employee SET firstName = ?, lastName = ?, email = ?, phoneNumber = ?, hireDate = ?, departmentID = ?, position = ?, isManager = ? WHERE employeeID = ?";
+        String sql = "UPDATE Employee SET firstName = ?, lastName = ?, email = ?, phoneNumber = ?, hireDate = ?, departmentID = ?, position = ?, isManager = ?, password = ? WHERE employeeID = ?";
 
         try (Connection conn = dbManager.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -144,7 +145,8 @@ public class EmployeeDAO {
 
             stmt.setString(7, employee.getPosition());
             stmt.setBoolean(8, employee.getIsManager() != null ? employee.getIsManager() : false);
-            stmt.setInt(9, employee.getEmployeeID());
+            stmt.setString(9, employee.getPassword());
+            stmt.setInt(10, employee.getEmployeeID());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -193,6 +195,7 @@ public class EmployeeDAO {
 
         emp.setPosition(rs.getString("position"));
         emp.setIsManager(rs.getBoolean("isManager"));
+        emp.setPassword(rs.getString("password"));
 
         return emp;
     }

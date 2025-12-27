@@ -1,6 +1,13 @@
 package com.example.demo.model;
 
+import com.example.demo.db.DatabaseManager;
+import com.example.demo.util.DiscountedProduct;
+
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +29,10 @@ public class Manager extends Employee {
     }
 
     // Conforming to Employee constructor
-    public Manager(String name, String gender, String address, java.time.LocalDate dob, double salary, String jobTitle,
+    public Manager(String name, String gender, String address, java.time.LocalDate dob, String password, double salary,
+            String jobTitle,
             List<String> phoneNumbers) {
-        super(name, gender, address, dob, salary, jobTitle, phoneNumbers);
+        super(name, gender, address, dob, password, salary, jobTitle, phoneNumbers);
         this.departmentEmployees = new ArrayList<>();
     }
 
@@ -49,8 +57,57 @@ public class Manager extends Employee {
         }
     }
 
-    public void analyzeMarketTrends() {
+    /**
+     * Analyzes market trends to find the most sold product and returns it with a 5%
+     * discount.
+     * This discount is only applied in-memory and does NOT modify the database
+     * price.
+     *
+     * @return DiscountedProduct containing the most sold product with 5% discount,
+     *         or null if no sales data
+     */
+    public DiscountedProduct analyzeMarketTrends() {
         System.out.println("Analyzing market trends...");
+
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        // Query to find the product with highest total quantity sold from
+        // completed/checked-out carts
+        String sql = """
+                SELECT p.productID, p.productName, p.price, SUM(ci.quantity) as totalSold
+                FROM CartItem ci
+                JOIN Cart c ON ci.cartID = c.cartID
+                JOIN Product p ON ci.productID = p.productID
+                WHERE c.status IN ('checked_out', 'completed')
+                GROUP BY p.productID, p.productName, p.price
+                ORDER BY totalSold DESC
+                LIMIT 1
+                """;
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                int productID = rs.getInt("productID");
+                String productName = rs.getString("productName");
+                double originalPrice = rs.getDouble("price");
+                int totalSold = rs.getInt("totalSold");
+
+                System.out.println("Most sold product: " + productName + " (ID: " + productID +
+                        ", Sold: " + totalSold + ", Price: $" + originalPrice + ")");
+
+                // Return the discounted product (5% off is applied in DiscountedProduct
+                // constructor)
+                return new DiscountedProduct(productID, productName, originalPrice);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error analyzing market trends: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        System.out.println("No sales data found for market trend analysis.");
+        return null;
     }
 
     public void assignTask(Employee e, String task) {

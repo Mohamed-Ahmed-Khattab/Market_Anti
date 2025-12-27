@@ -31,11 +31,7 @@ public class EmployeeFormController implements Initializable {
     @FXML
     private DatePicker hireDatePicker;
     @FXML
-    private TextField positionField;
-    @FXML
     private ComboBox<Department> departmentCombo;
-    @FXML
-    private CheckBox managerCheckbox;
 
     private final EmployeeDAO employeeDAO = new EmployeeDAO();
     private final DepartmentDAO departmentDAO = new DepartmentDAO();
@@ -70,9 +66,6 @@ public class EmployeeFormController implements Initializable {
             emailField.setText(employee.getEmail());
             phoneField.setText(employee.getPhoneNumber());
             hireDatePicker.setValue(employee.getHireDate());
-            positionField.setText(employee.getPosition());
-            managerCheckbox.setSelected(Boolean.TRUE.equals(employee.getIsManager()));
-
             if (employee.getDepartmentID() != null) {
                 for (Department d : departmentCombo.getItems()) {
                     if (d.getDepartmentID() == employee.getDepartmentID()) {
@@ -90,6 +83,7 @@ public class EmployeeFormController implements Initializable {
             boolean isNew = (currentEmployee == null);
             if (isNew) {
                 currentEmployee = new Employee();
+                currentEmployee.setPassword("password123"); // Default for new additions
             }
 
             currentEmployee.setFirstName(firstNameField.getText());
@@ -97,8 +91,12 @@ public class EmployeeFormController implements Initializable {
             currentEmployee.setEmail(emailField.getText());
             currentEmployee.setPhoneNumber(phoneField.getText());
             currentEmployee.setHireDate(hireDatePicker.getValue());
-            currentEmployee.setPosition(positionField.getText());
-            currentEmployee.setIsManager(managerCheckbox.isSelected());
+
+            if (isNew) {
+                currentEmployee.setPosition("Entry Level");
+                currentEmployee.setIsManager(false);
+            }
+            // For editing, we keep the existing position/manager status unchanged.
 
             if (departmentCombo.getValue() != null) {
                 currentEmployee.setDepartmentID(departmentCombo.getValue().getDepartmentID());
@@ -134,6 +132,10 @@ public class EmployeeFormController implements Initializable {
         }
         if (!ValidationUtil.isValidEmail(emailField.getText())) {
             AlertUtil.showWarning("Validation", "Valid Email is required.");
+            return false;
+        }
+        if (departmentCombo.getValue() == null) {
+            AlertUtil.showWarning("Validation", "Department is required.");
             return false;
         }
         return true;

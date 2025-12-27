@@ -2,8 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.dao.DepartmentDAO;
 import com.example.demo.dao.EmployeeDAO;
+import com.example.demo.dao.ManagerDAO;
 import com.example.demo.model.Department;
 import com.example.demo.model.Employee;
+import com.example.demo.model.Manager;
 import com.example.demo.util.AlertUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -43,6 +45,7 @@ public class EmployeeController implements Initializable {
     private TextField searchField;
 
     private final EmployeeDAO employeeDAO = new EmployeeDAO();
+    private final ManagerDAO managerDAO = new ManagerDAO();
     private final DepartmentDAO departmentDAO = new DepartmentDAO();
     private ObservableList<Employee> employeeList = FXCollections.observableArrayList();
 
@@ -104,6 +107,42 @@ public class EmployeeController implements Initializable {
             }
         } else {
             AlertUtil.showWarning("No Selection", "Please select an employee to delete.");
+        }
+    }
+
+    @FXML
+    void handlePromote(ActionEvent event) {
+        Employee selected = employeeTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            String currentPos = selected.getPosition() != null ? selected.getPosition() : "Entry Level";
+            if (AlertUtil.showConfirmation("Promote Employee",
+                    "Current Position: " + currentPos + "\nPromote " + selected.getFullName() + "?")) {
+
+                if (com.example.demo.model.CEO.promoteEmployee(selected)) {
+                    loadData();
+                    AlertUtil.showInfo("Success", "Employee promoted successfully.");
+                }
+            }
+        } else {
+            AlertUtil.showWarning("No Selection", "Please select an employee to promote.");
+        }
+    }
+
+    @FXML
+    void handleDemote(ActionEvent event) {
+        Employee selected = employeeTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            String currentPos = selected.getPosition() != null ? selected.getPosition() : "Entry Level";
+            if (AlertUtil.showConfirmation("Demote Employee",
+                    "Current Position: " + currentPos + "\nDemote " + selected.getFullName() + "?")) {
+
+                if (com.example.demo.model.CEO.demoteEmployee(selected)) {
+                    loadData();
+                    AlertUtil.showInfo("Success", "Employee demoted successfully.");
+                }
+            }
+        } else {
+            AlertUtil.showWarning("No Selection", "Please select an employee to demote.");
         }
     }
 

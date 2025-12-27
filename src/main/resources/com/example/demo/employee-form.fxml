@@ -56,12 +56,8 @@
                   <TextField fx:id="phoneField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <Label text="Hire Date" GridPane.rowIndex="4" />
                   <DatePicker fx:id="hireDatePicker" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label text="Position" GridPane.rowIndex="5" />
-                  <TextField fx:id="positionField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <Label text="Department" GridPane.rowIndex="6" />
-                  <ComboBox fx:id="departmentCombo" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <Label text="Options" GridPane.rowIndex="7" />
-                  <CheckBox fx:id="managerCheckbox" mnemonicParsing="false" text="Is Manager" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                  <Label text="Department *" GridPane.rowIndex="5" />
+                  <ComboBox fx:id="departmentCombo" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                </children>
             </GridPane>
             <HBox alignment="CENTER_RIGHT" prefHeight="80.0" prefWidth="200.0" spacing="10.0">

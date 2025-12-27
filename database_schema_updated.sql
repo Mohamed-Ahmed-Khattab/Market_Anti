@@ -1,6 +1,6 @@
 -- ============================================
--- Complete Database Schema for Market Management System
--- Based on UML Diagram
+-- Complete Database Schema for Market Management System (Updated)
+-- Updates: Added SupplierProduct junction table, removed text 'products' column
 -- ============================================
 
 DROP DATABASE IF EXISTS market_db;
@@ -30,8 +30,9 @@ CREATE TABLE Employee (
     phoneNumber VARCHAR(20),
     hireDate DATE NOT NULL,
     departmentID INT,
-    position VARCHAR(100),
+    position VARCHAR(100), -- 'Entry Level', 'Junior', 'Senior', 'Manager', 'CEO'
     isManager BOOLEAN DEFAULT FALSE,
+    password VARCHAR(255) NOT NULL,
     
     FOREIGN KEY (departmentID) REFERENCES Department(departmentID) 
         ON DELETE SET NULL ON UPDATE CASCADE,
@@ -43,10 +44,10 @@ CREATE TABLE Employee (
 -- MANAGER TABLE (Inherits from Employee)
 -- ============================================
 CREATE TABLE Manager (
-    managerID INT PRIMARY KEY,
+    managerID INT PRIMARY KEY AUTO_INCREMENT,
     employeeID INT UNIQUE NOT NULL,
     departmentID INT,
-    managementLevel VARCHAR(50),
+    managementLevel VARCHAR(50), -- 'Level 1', 'CEO', etc.
     bonus DECIMAL(10, 2) DEFAULT 0.00,
     
     FOREIGN KEY (employeeID) REFERENCES Employee(employeeID) 
@@ -97,6 +98,7 @@ CREATE TABLE Customer (
     country VARCHAR(100) DEFAULT 'Egypt',
     registrationDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     loyaltyPoints INT DEFAULT 0,
+    password VARCHAR(255) NOT NULL,
     
     INDEX idx_email (email),
     INDEX idx_phone (phoneNumber)
@@ -152,6 +154,21 @@ CREATE TABLE Product (
 ) ENGINE=InnoDB;
 
 -- ============================================
+-- SUPPLIER_PRODUCT TABLE (Junction Table)
+-- ============================================
+CREATE TABLE SupplierProduct (
+    supplierID INT NOT NULL,
+    productID INT NOT NULL,
+    
+    PRIMARY KEY (supplierID, productID),
+    FOREIGN KEY (supplierID) REFERENCES Supplier(supplierID)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (productID) REFERENCES Product(productID)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- ============================================
 -- ENDORSEMENT TABLE
 -- ============================================
 CREATE TABLE Endorsement (
@@ -177,7 +194,7 @@ CREATE TABLE Cart (
     customerID INT NOT NULL,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    status ENUM('active', 'checked_out', 'abandoned') DEFAULT 'active',
+    status ENUM('active', 'checked_out', 'abandoned', 'completed') DEFAULT 'active',
     
     FOREIGN KEY (customerID) REFERENCES Customer(customerID) 
         ON DELETE CASCADE ON UPDATE CASCADE,
@@ -222,7 +239,7 @@ CREATE TABLE Users (
 
 
 -- ============================================
--- SAMPLE DATA INSERTION
+-- SAMPLE DATA INSERTION (UPDATED)
 -- ============================================
 
 -- Insert Departments
@@ -231,58 +248,59 @@ INSERT INTO Department (departmentName, location, budget) VALUES
 ('Inventory', 'Warehouse A', 75000.00),
 ('Customer Service', 'Floor 2', 30000.00),
 ('IT', 'Floor 3', 100000.00),
-('Human Resources', 'Floor 2', 40000.00);
+('Human Resources', 'Floor 2', 40000.00),
+('Executive', 'Penthouse', 500000.00); 
 
 -- Insert Employees
-INSERT INTO Employee (firstName, lastName, email, phoneNumber, hireDate, departmentID, position, isManager) VALUES
-('Ahmed', 'Hassan', 'ahmed.hassan@market.com', '+20-100-1234567', '2020-01-15', 1, 'Sales Manager', TRUE),
-('Fatima', 'Ali', 'fatima.ali@market.com', '+20-100-2345678', '2019-03-20', 2, 'Inventory Manager', TRUE),
-('Mohamed', 'Ibrahim', 'mohamed.ibrahim@market.com', '+20-100-3456789', '2021-06-10', 3, 'Customer Service Rep', FALSE),
-('Sara', 'Mahmoud', 'sara.mahmoud@market.com', '+20-100-4567890', '2020-08-25', 1, 'Sales Associate', FALSE),
-('Omar', 'Khaled', 'omar.khaled@market.com', '+20-100-5678901', '2018-11-30', 4, 'IT Manager', TRUE),
-('Nour', 'Ahmed', 'nour.ahmed@market.com', '+20-100-6789012', '2022-02-14', 5, 'HR Manager', TRUE),
-('Youssef', 'Said', 'youssef.said@market.com', '+20-100-7890123', '2021-09-05', 2, 'Warehouse Staff', FALSE),
-('Layla', 'Mostafa', 'layla.mostafa@market.com', '+20-100-8901234', '2020-04-18', 3, 'Customer Service Rep', FALSE);
+INSERT INTO Employee (firstName, lastName, email, phoneNumber, hireDate, departmentID, position, isManager, password) VALUES
+('The', 'CEO', 'ceo@market.com', '+20-100-0000000', '2015-01-01', 6, 'CEO', TRUE, 'ceo123'), 
+('Ahmed', 'Hassan', 'ahmed.hassan@market.com', '+20-100-1234567', '2020-01-15', 1, 'Manager', TRUE, 'password123'), 
+('Fatima', 'Ali', 'fatima.ali@market.com', '+20-100-2345678', '2019-03-20', 2, 'Senior', FALSE, 'password123'), 
+('Mohamed', 'Ibrahim', 'mohamed.ibrahim@market.com', '+20-100-3456789', '2021-06-10', 3, 'Junior', FALSE, 'password123'), 
+('Sara', 'Mahmoud', 'sara.mahmoud@market.com', '+20-100-4567890', '2020-08-25', 1, 'Entry Level', FALSE, 'password123'), 
+('Omar', 'Khaled', 'omar.khaled@market.com', '+20-100-5678901', '2018-11-30', 4, 'Manager', TRUE, 'password123'), 
+('Nour', 'Ahmed', 'nour.ahmed@market.com', '+20-100-6789012', '2022-02-14', 5, 'Senior', FALSE, 'password123'), 
+('Youssef', 'Said', 'youssef.said@market.com', '+20-100-7890123', '2021-09-05', 2, 'Junior', FALSE, 'password123'), 
+('Layla', 'Mostafa', 'layla.mostafa@market.com', '+20-100-8901234', '2020-04-18', 3, 'Entry Level', FALSE, 'password123'); 
 
 -- Insert Managers
-INSERT INTO Manager (managerID, employeeID, departmentID, managementLevel, bonus) VALUES
-(1, 1, 1, 'Senior', 5000.00),
-(2, 2, 2, 'Senior', 4500.00),
-(3, 5, 4, 'Senior', 6000.00),
-(4, 6, 5, 'Mid-level', 3500.00);
+INSERT INTO Manager (employeeID, departmentID, managementLevel, bonus) VALUES
+(1, 6, 'CEO', 50000.00),     
+(2, 1, 'Level 1', 5000.00),  
+(6, 4, 'Level 1', 6000.00);  
 
 -- Update Department with Manager IDs
-UPDATE Department SET managerID = 1 WHERE departmentID = 1;
-UPDATE Department SET managerID = 2 WHERE departmentID = 2;
-UPDATE Department SET managerID = 3 WHERE departmentID = 4;
-UPDATE Department SET managerID = 4 WHERE departmentID = 5;
+UPDATE Department SET managerID = 1 WHERE departmentID = 6; 
+UPDATE Department SET managerID = 2 WHERE departmentID = 1; 
+UPDATE Department SET managerID = 3 WHERE departmentID = 4; 
 
 -- Insert Salaries
 INSERT INTO Salary (employeeID, baseSalary, bonus, deductions, effectiveDate, paymentFrequency) VALUES
-(1, 15000.00, 5000.00, 500.00, '2020-01-15', 'monthly'),
-(2, 14000.00, 4500.00, 450.00, '2019-03-20', 'monthly'),
-(3, 8000.00, 0.00, 300.00, '2021-06-10', 'monthly'),
-(4, 7000.00, 500.00, 250.00, '2020-08-25', 'monthly'),
-(5, 18000.00, 6000.00, 600.00, '2018-11-30', 'monthly'),
-(6, 12000.00, 3500.00, 400.00, '2022-02-14', 'monthly'),
-(7, 6500.00, 0.00, 200.00, '2021-09-05', 'monthly'),
-(8, 7500.00, 300.00, 250.00, '2020-04-18', 'monthly');
+(1, 50000.00, 20000.00, 1000.00, '2015-01-01', 'monthly'),
+(2, 15000.00, 5000.00, 500.00, '2020-01-15', 'monthly'),
+(3, 14000.00, 4500.00, 450.00, '2019-03-20', 'monthly'),
+(4, 8000.00, 0.00, 300.00, '2021-06-10', 'monthly'),
+(5, 7000.00, 500.00, 250.00, '2020-08-25', 'monthly'),
+(6, 18000.00, 6000.00, 600.00, '2018-11-30', 'monthly'),
+(7, 12000.00, 3500.00, 400.00, '2022-02-14', 'monthly'),
+(8, 6500.00, 0.00, 200.00, '2021-09-05', 'monthly'),
+(9, 7500.00, 300.00, 250.00, '2020-04-18', 'monthly');
 
 -- Insert Customers
-INSERT INTO Customer (firstName, lastName, email, phoneNumber, address, city, state, zipCode, loyaltyPoints) VALUES
-('Khaled', 'Farouk', 'khaled.farouk@email.com', '+20-111-1111111', '123 Tahrir St', 'Cairo', 'Cairo', '11511', 150),
-('Mona', 'Sayed', 'mona.sayed@email.com', '+20-111-2222222', '456 Nile Ave', 'Giza', 'Giza', '12511', 200),
-('Tarek', 'Nasser', 'tarek.nasser@email.com', '+20-111-3333333', '789 Alexandria Rd', 'Alexandria', 'Alexandria', '21500', 75),
-('Heba', 'Zaki', 'heba.zaki@email.com', '+20-111-4444444', '321 Mansoura St', 'Mansoura', 'Dakahlia', '35511', 300),
-('Amr', 'Salah', 'amr.salah@email.com', '+20-111-5555555', '654 Aswan Blvd', 'Aswan', 'Aswan', '81511', 50);
+INSERT INTO Customer (firstName, lastName, email, phoneNumber, address, city, state, zipCode, loyaltyPoints, password) VALUES
+('Khaled', 'Farouk', 'khaled.farouk@email.com', '+20-111-1111111', '123 Tahrir St', 'Cairo', 'Cairo', '11511', 150, 'password123'),
+('Mona', 'Sayed', 'mona.sayed@email.com', '+20-111-2222222', '456 Nile Ave', 'Giza', 'Giza', '12511', 200, 'password123'),
+('Tarek', 'Nasser', 'tarek.nasser@email.com', '+20-111-3333333', '789 Alexandria Rd', 'Alexandria', 'Alexandria', '21500', 75, 'password123'),
+('Heba', 'Zaki', 'heba.zaki@email.com', '+20-111-4444444', '321 Mansoura St', 'Mansoura', 'Dakahlia', '35511', 300, 'password123'),
+('Amr', 'Salah', 'amr.salah@email.com', '+20-111-5555555', '654 Aswan Blvd', 'Aswan', 'Aswan', '81511', 50, 'password123');
 
--- Insert Suppliers
+-- Insert Suppliers (Removed 'products' string column)
 INSERT INTO Supplier (supplierName, contactPerson, email, phoneNumber, address, city, country, rating) VALUES
 ('Fresh Foods Co.', 'Ali Hassan', 'ali@freshfoods.com', '+20-222-1111111', '10 Industrial Zone', 'Cairo', 'Egypt', 4.5),
 ('Global Electronics', 'John Smith', 'john@globalelec.com', '+1-555-1234567', '500 Tech Park', 'New York', 'USA', 4.8),
 ('Local Dairy Farm', 'Mahmoud Amin', 'mahmoud@localdairy.com', '+20-222-2222222', '25 Farm Road', 'Fayoum', 'Egypt', 4.2),
 ('Import Export Ltd', 'Sarah Johnson', 'sarah@importexport.com', '+44-20-12345678', '100 Trade Center', 'London', 'UK', 4.6),
-('Organic Produce', 'Fatma Youssef', 'fatma@organic.com', '+20-222-3333333', '15 Green Valley', 'Ismailia', 'Egypt', 4.7);
+('Low Quality Supplies', 'Bad Guy', 'bad@supply.com', '+20-000-0000000', 'Nowhere', 'Cairo', 'Egypt', 2.0); 
 
 -- Insert Products
 INSERT INTO Product (productName, description, category, price, cost, stockQuantity, reorderLevel, supplierID, barcode, sku) VALUES
@@ -297,6 +315,28 @@ INSERT INTO Product (productName, description, category, price, cost, stockQuant
 ('Olive Oil 500ml', 'Extra virgin olive oil', 'Cooking Oils', 95.00, 70.00, 60, 15, 4, '1234567890009', 'OIL-001'),
 ('Eggs 12pcs', 'Fresh farm eggs', 'Dairy', 35.00, 25.00, 180, 40, 3, '1234567890010', 'EGG-001');
 
+-- LINK SUPPLIERS TO PRODUCTS (Populating the Junction Table)
+-- Supplier 1 (Fresh Foods) -> Bread (2), Chicken (3), Tomatoes (4), Rice (5), Juice (6) - General broad supplier
+INSERT INTO SupplierProduct (supplierID, productID) VALUES
+(1, 2), (1, 3), (1, 4), (1, 5), (1, 6);
+
+-- Supplier 2 (Global Electronics) -> Laptop (7), Smartphone (8)
+INSERT INTO SupplierProduct (supplierID, productID) VALUES
+(2, 7), (2, 8);
+
+-- Supplier 3 (Local Dairy) -> Milk (1), Eggs (10)
+INSERT INTO SupplierProduct (supplierID, productID) VALUES
+(3, 1), (3, 10);
+
+-- Supplier 4 (Import Export) -> Olive Oil (9), Rice (5 - also supplied by Fresh Foods)
+INSERT INTO SupplierProduct (supplierID, productID) VALUES
+(4, 9), (4, 5);
+
+-- Supplier 5 (Low Quality) -> Tomatoes (4 - also supplied by Fresh Foods)
+INSERT INTO SupplierProduct (supplierID, productID) VALUES
+(5, 4);
+
+
 -- Insert Endorsements
 INSERT INTO Endorsement (productID, endorserName, endorsementType, startDate, endDate, description) VALUES
 (7, 'Tech Review Magazine', 'Media', '2024-01-01', '2024-12-31', 'Best value laptop 2024'),
@@ -304,37 +344,26 @@ INSERT INTO Endorsement (productID, endorserName, endorsementType, startDate, en
 (9, 'Chef Ahmed', 'Celebrity', '2024-03-01', '2025-03-01', 'Premium quality olive oil');
 
 -- Insert Carts
-INSERT INTO Cart (customerID, status) VALUES
-(1, 'active'),
-(2, 'active'),
-(3, 'checked_out'),
-(4, 'active'),
-(5, 'abandoned');
+INSERT INTO Cart (customerID, status, updatedAt) VALUES
+(1, 'completed', NOW()),         
+(2, 'completed', NOW() - INTERVAL 2 DAY),
+(3, 'checked_out', NOW()),
+(4, 'active', NOW());
 
--- Insert Cart Items
+-- Insert Cart Items 
 INSERT INTO CartItem (cartID, productID, quantity, priceAtAdd) VALUES
-(1, 1, 2, 25.00),
-(1, 2, 3, 10.00),
-(1, 4, 1, 15.00),
-(2, 7, 1, 12000.00),
-(2, 9, 2, 95.00),
-(3, 3, 2, 85.00),
-(3, 5, 1, 120.00),
-(3, 10, 3, 35.00),
-(4, 6, 4, 30.00),
-(4, 4, 2, 15.00);
+(1, 7, 1, 12000.00), 
+(2, 8, 1, 8000.00);  
 
 -- Insert Users
 INSERT INTO Users (email, password, firstName, lastName, userType) VALUES
 ('admin@market.com', 'admin123', 'System', 'Admin', 'ADMIN'),
 ('cashier@market.com', 'cashier123', 'John', 'Doe', 'CASHIER');
 
-
 -- ============================================
--- USEFUL VIEWS
+-- VIEWS (UNCHANGED)
 -- ============================================
 
--- View: Employee Full Details with Salary
 CREATE VIEW vw_EmployeeDetails AS
 SELECT 
     e.employeeID,
@@ -389,137 +418,8 @@ INNER JOIN Customer cu ON c.customerID = cu.customerID
 LEFT JOIN CartItem ci ON c.cartID = ci.cartID
 GROUP BY c.cartID, c.customerID, cu.firstName, cu.lastName, c.status, c.createdAt, c.updatedAt;
 
--- View: Department Summary
-CREATE VIEW vw_DepartmentSummary AS
-SELECT 
-    d.departmentID,
-    d.departmentName,
-    d.location,
-    d.budget,
-    CONCAT(e.firstName, ' ', e.lastName) AS managerName,
-    COUNT(emp.employeeID) AS totalEmployees,
-    SUM(s.baseSalary + COALESCE(s.bonus, 0)) AS totalSalaryExpense
-FROM Department d
-LEFT JOIN Manager m ON d.managerID = m.managerID
-LEFT JOIN Employee e ON m.employeeID = e.employeeID
-LEFT JOIN Employee emp ON d.departmentID = emp.departmentID
-LEFT JOIN Salary s ON emp.employeeID = s.employeeID AND s.endDate IS NULL
-GROUP BY d.departmentID, d.departmentName, d.location, d.budget, e.firstName, e.lastName;
-
--- ============================================
--- STORED PROCEDURES
--- ============================================
-
-DELIMITER //
-
--- Procedure: Add Product to Cart
-CREATE PROCEDURE sp_AddToCart(
-    IN p_customerID INT,
-    IN p_productID INT,
-    IN p_quantity INT
-)
-BEGIN
-    DECLARE v_cartID INT;
-    DECLARE v_price DECIMAL(10,2);
-    DECLARE v_existingQuantity INT;
-    
-    -- Get or create active cart
-    SELECT cartID INTO v_cartID 
-    FROM Cart 
-    WHERE customerID = p_customerID AND status = 'active' 
-    LIMIT 1;
-    
-    IF v_cartID IS NULL THEN
-        INSERT INTO Cart (customerID, status) VALUES (p_customerID, 'active');
-        SET v_cartID = LAST_INSERT_ID();
-    END IF;
-    
-    -- Get product price
-    SELECT price INTO v_price FROM Product WHERE productID = p_productID;
-    
-    -- Check if product already in cart
-    SELECT quantity INTO v_existingQuantity 
-    FROM CartItem 
-    WHERE cartID = v_cartID AND productID = p_productID;
-    
-    IF v_existingQuantity IS NOT NULL THEN
-        -- Update quantity
-        UPDATE CartItem 
-        SET quantity = quantity + p_quantity 
-        WHERE cartID = v_cartID AND productID = p_productID;
-    ELSE
-        -- Insert new item
-        INSERT INTO CartItem (cartID, productID, quantity, priceAtAdd)
-        VALUES (v_cartID, p_productID, p_quantity, v_price);
-    END IF;
-END //
-
--- Procedure: Calculate Cart Total
-CREATE PROCEDURE sp_GetCartTotal(
-    IN p_cartID INT,
-    OUT p_total DECIMAL(10,2)
-)
-BEGIN
-    SELECT SUM(quantity * priceAtAdd) INTO p_total
-    FROM CartItem
-    WHERE cartID = p_cartID;
-    
-    IF p_total IS NULL THEN
-        SET p_total = 0.00;
-    END IF;
-END //
-
--- Procedure: Update Product Stock
-CREATE PROCEDURE sp_UpdateProductStock(
-    IN p_productID INT,
-    IN p_quantityChange INT
-)
-BEGIN
-    UPDATE Product 
-    SET stockQuantity = stockQuantity + p_quantityChange,
-        updatedAt = CURRENT_TIMESTAMP
-    WHERE productID = p_productID;
-    
-    -- Check if reorder needed
-    SELECT productID, productName, stockQuantity, reorderLevel
-    FROM Product
-    WHERE productID = p_productID AND stockQuantity <= reorderLevel;
-END //
-
-DELIMITER ;
-
--- ============================================
--- INDEXES FOR PERFORMANCE
--- ============================================
-
--- Additional indexes for common queries
-CREATE INDEX idx_product_category_active ON Product(category, isActive);
-CREATE INDEX idx_cart_customer_status ON Cart(customerID, status);
-CREATE INDEX idx_employee_department_manager ON Employee(departmentID, isManager);
-
 -- ============================================
 -- DATABASE STATISTICS
 -- ============================================
 
-SELECT 'Database Schema Created Successfully!' AS Status;
-
-SELECT 
-    'Departments' AS TableName, COUNT(*) AS RecordCount FROM Department
-UNION ALL
-SELECT 'Employees', COUNT(*) FROM Employee
-UNION ALL
-SELECT 'Managers', COUNT(*) FROM Manager
-UNION ALL
-SELECT 'Salaries', COUNT(*) FROM Salary
-UNION ALL
-SELECT 'Customers', COUNT(*) FROM Customer
-UNION ALL
-SELECT 'Suppliers', COUNT(*) FROM Supplier
-UNION ALL
-SELECT 'Products', COUNT(*) FROM Product
-UNION ALL
-SELECT 'Endorsements', COUNT(*) FROM Endorsement
-UNION ALL
-SELECT 'Carts', COUNT(*) FROM Cart
-UNION ALL
-SELECT 'Cart Items', COUNT(*) FROM CartItem;
+SELECT 'Database Schema Refactored Successfully!' AS Status;

@@ -27,6 +27,8 @@
             <Button mnemonicParsing="false" onAction="#handleCustomers" text="Customers" />
             <Button mnemonicParsing="false" onAction="#handleDepartments" text="Departments" />
             <Button mnemonicParsing="false" onAction="#handleMakeOrder" text="Make Order" />
+            <Separator orientation="VERTICAL" />
+            <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Logout" />
         </items>
       </ToolBar>
    </top>
@@ -58,6 +60,11 @@
                </VBox.margin>
             </Button>
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSuppliers" text="Suppliers" textAlignment="LEFT">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSupply" text="Supply Products" textAlignment="LEFT">
                <VBox.margin>
                   <Insets bottom="5.0" left="10.0" right="10.0" />
                </VBox.margin>

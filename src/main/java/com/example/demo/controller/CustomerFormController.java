@@ -41,34 +41,24 @@ public class CustomerFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Disable fields not supported by the simplified Model
-        emailField.setDisable(true);
-        emailField.setPromptText("Not supported by Model");
-        phoneField.setDisable(true);
-        phoneField.setPromptText("Not supported by Model");
-        cityField.setDisable(true);
-        cityField.setPromptText("Not supported by Model");
-        stateField.setDisable(true);
-        stateField.setPromptText("Not supported by Model");
-        countryField.setDisable(true);
-        countryField.setPromptText("Not supported by Model");
-        zipField.setDisable(true);
-        zipField.setPromptText("Not supported by Model");
-        loyaltyField.setDisable(true);
-        loyaltyField.setPromptText("Not supported by Model");
+        // All fields enabled
     }
 
     public void setCustomer(Customer customer) {
         this.currentCustomer = customer;
         if (customer != null) {
-            // Split name into first/last for display
             String[] parts = customer.getName().split(" ", 2);
             firstNameField.setText(parts.length > 0 ? parts[0] : "");
             lastNameField.setText(parts.length > 1 ? parts[1] : "");
 
+            emailField.setText(customer.getEmail());
+            phoneField.setText(customer.getPhoneNumber());
             addressField.setText(customer.getAddress());
-
-            // Other fields remain empty/disabled
+            cityField.setText(customer.getCity());
+            stateField.setText(customer.getState());
+            zipField.setText(customer.getZipCode());
+            countryField.setText(customer.getCountry());
+            loyaltyField.setText(String.valueOf(customer.getLoyaltyPoints()));
         }
     }
 
@@ -78,17 +68,29 @@ public class CustomerFormController implements Initializable {
             boolean isNew = (currentCustomer == null);
 
             String name = firstNameField.getText() + " " + lastNameField.getText();
+            String email = emailField.getText();
+            String phone = phoneField.getText();
             String address = addressField.getText();
+            String city = cityField.getText();
+            String state = stateField.getText();
+            String zip = zipField.getText();
+            String country = countryField.getText();
+            int loyalty = ValidationUtil.isEmpty(loyaltyField.getText()) ? 0 : Integer.parseInt(loyaltyField.getText());
 
             if (isNew) {
-                // Constructor: Name, Gender, Address, DOB, isPremium, Balance
-                currentCustomer = new Customer(name, "Unknown", address, null, false, 0.0);
-            } else {
-                currentCustomer.setName(name);
-                currentCustomer.setAddress(address);
+                currentCustomer = new Customer(name);
+                currentCustomer.setPassword("customer123"); // Default password for new manual additions
             }
 
-            // Note: email/phone etc are ignored as Model doesn't store them.
+            currentCustomer.setName(name);
+            currentCustomer.setEmail(email);
+            currentCustomer.setPhoneNumber(phone);
+            currentCustomer.setAddress(address);
+            currentCustomer.setCity(city);
+            currentCustomer.setState(state);
+            currentCustomer.setZipCode(zip);
+            currentCustomer.setCountry(country);
+            currentCustomer.setLoyaltyPoints(loyalty);
 
             boolean success;
             if (isNew) {

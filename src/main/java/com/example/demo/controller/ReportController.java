@@ -115,7 +115,9 @@ public class ReportController implements Initializable {
             stmt.setDate(1, Date.valueOf(selectedDate));
             ResultSet rs = stmt.executeQuery();
 
+            boolean foundData = false;
             while (rs.next()) {
+                foundData = true;
                 String productName = rs.getString("productName");
                 int quantity = rs.getInt("quantity");
                 double unitPrice = rs.getDouble("priceAtAdd");
@@ -134,6 +136,10 @@ public class ReportController implements Initializable {
                 totalSales += total;
             }
 
+            if (!foundData) {
+                System.out.println("No sales data found for date: " + selectedDate);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             AlertUtil.showError("Error", "Could not generate report: " + e.getMessage());
@@ -143,6 +149,7 @@ public class ReportController implements Initializable {
         // Update the table
         if (reportTable != null) {
             reportTable.setItems(reportItems);
+            reportTable.refresh();
         }
 
         // Update total labels
@@ -162,11 +169,6 @@ public class ReportController implements Initializable {
         if (reportItems.isEmpty() && datePicker.getValue() != null) {
             // Don't show alert on auto-load, just update labels
         }
-    }
-
-    @FXML
-    void goBack(ActionEvent event) {
-        CommonMethod.goToBack(event, getClass());
     }
 
     /**

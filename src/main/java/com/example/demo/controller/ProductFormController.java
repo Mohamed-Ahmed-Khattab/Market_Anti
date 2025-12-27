@@ -42,30 +42,35 @@ public class ProductFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Disable unsupported fields
-        descriptionArea.setDisable(true);
-        descriptionArea.setPromptText("Not supported by Model");
-        categoryField.setDisable(true);
-        categoryField.setPromptText("Not supported by Model");
-        costField.setDisable(true);
-        costField.setPromptText("Not supported by Model");
-        reorderField.setDisable(true);
-        reorderField.setPromptText("Not supported by Model");
-        supplierCombo.setDisable(true);
-        supplierCombo.setPromptText("Not supported by Model");
-        barcodeField.setDisable(true);
-        barcodeField.setPromptText("Not supported by Model");
-        skuField.setDisable(true);
-        skuField.setPromptText("Not supported by Model");
+        loadSuppliers();
+    }
+
+    private void loadSuppliers() {
+        com.example.demo.dao.SupplierDAO supplierDAO = new com.example.demo.dao.SupplierDAO();
+        supplierCombo.setItems(javafx.collections.FXCollections.observableArrayList(supplierDAO.getAll()));
     }
 
     public void setProduct(Product product) {
         this.currentProduct = product;
         if (product != null) {
             nameField.setText(product.getName());
+            descriptionArea.setText(product.getDescription());
+            categoryField.setText(product.getCategory());
             priceField.setText(String.valueOf(product.getPrice()));
+            costField.setText(String.valueOf(product.getCost()));
             stockField.setText(String.valueOf(product.getStockQuantity()));
-            // Other fields ignored
+            reorderField.setText(String.valueOf(product.getReorderLevel()));
+            barcodeField.setText(product.getBarcode());
+            skuField.setText(product.getSku());
+
+            if (product.getSupplierID() > 0) {
+                for (Supplier s : supplierCombo.getItems()) {
+                    if (s.getSupplierID() == product.getSupplierID()) {
+                        supplierCombo.setValue(s);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -75,20 +80,33 @@ public class ProductFormController implements Initializable {
             boolean isNew = (currentProduct == null);
 
             String name = nameField.getText();
+            String description = descriptionArea.getText();
+            String category = categoryField.getText();
             double price = Double.parseDouble(priceField.getText());
+            double cost = ValidationUtil.isEmpty(costField.getText()) ? 0 : Double.parseDouble(costField.getText());
             int stock = Integer.parseInt(stockField.getText());
+            int reorder = ValidationUtil.isEmpty(reorderField.getText()) ? 10
+                    : Integer.parseInt(reorderField.getText());
+            String barcode = barcodeField.getText();
+            String sku = skuField.getText();
 
             if (isNew) {
-                // Constructor: productID, name, stockQuantity, price
-                // ID 0 for new
-                currentProduct = new Product(0, name, stock, price);
-            } else {
-                currentProduct.setName(name);
-                currentProduct.setPrice(price);
-                currentProduct.setStockQuantity(stock);
+                currentProduct = new Product();
             }
 
-            // Note: DAO handles defaults for missing fields like category, barcode etc.
+            currentProduct.setName(name);
+            currentProduct.setDescription(description);
+            currentProduct.setCategory(category);
+            currentProduct.setPrice(price);
+            currentProduct.setCost(cost);
+            currentProduct.setStockQuantity(stock);
+            currentProduct.setReorderLevel(reorder);
+            currentProduct.setBarcode(barcode);
+            currentProduct.setSku(sku);
+
+            if (supplierCombo.getValue() != null) {
+                currentProduct.setSupplierID(supplierCombo.getValue().getSupplierID());
+            }
 
             boolean success;
             if (isNew) {

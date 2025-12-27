@@ -56,14 +56,14 @@ public class DatabaseManager {
         threadPool.execute(task);
     }
 
-    public synchronized Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         if (dbUrl == null) {
             loadDatabaseProperties();
         }
-        if (connection == null || connection.isClosed()) {
-            connection = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
-        }
-        return connection;
+        // Return a fresh connection Every Time to avoid session/telemetry corruption in
+        // threads.
+        // DAOs are already using try-with-resources to close them.
+        return DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
     }
 
     private static void registerDriver() {

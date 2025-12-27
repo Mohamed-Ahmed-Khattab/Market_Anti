@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,13 +12,13 @@ import javafx.stage.Stage;
 import com.example.demo.exception.UserEmailExsist;
 import com.example.demo.exception.UserNotFound;
 import com.example.demo.model.UserModel;
-import com.example.demo.tm.Admin;
-import com.example.demo.tm.Cashier;
 import com.example.demo.tm.User;
 import com.example.demo.util.CommonMethod;
 import com.example.demo.util.CustomAlertType;
 import com.example.demo.util.SessionManager;
 import com.example.demo.util.UserType;
+import com.example.demo.dao.CustomerDAO;
+import com.example.demo.model.Customer;
 
 import java.io.IOException;
 
@@ -43,6 +41,9 @@ public class LoginAndRegistrationController {
 
     @FXML
     private PasswordField passwordField;
+
+    @FXML
+    private TextField passwordTextField;
 
     @FXML
     private TextField regFirstNameField1;
@@ -71,9 +72,6 @@ public class LoginAndRegistrationController {
     @FXML
     public void initialize() {
 
-        ObservableList<UserType> observableList = FXCollections.observableArrayList(UserType.values());
-        roleBox.setItems(observableList);
-
         goToRegistrationButton.setOnAction(event -> {
             loginPane.setVisible(false);
             registrationPane.setVisible(true);
@@ -90,7 +88,7 @@ public class LoginAndRegistrationController {
     void login(ActionEvent event) {
 
         String getUsername = usernameField.getText();
-        String password = passwordField.getText();
+        String password = passwordField.isVisible() ? passwordField.getText() : passwordTextField.getText();
 
         if (getUsername.isEmpty() || password.isEmpty()) {
             CommonMethod.showAlert("Login Error", "Please Enter User Name and Password", CustomAlertType.ERROR);
@@ -115,19 +113,24 @@ public class LoginAndRegistrationController {
     }
 
     private void loadDashboard() {
+        com.example.demo.tm.User currentUser = SessionManager.getCurrentUser();
+        String fxmlPath = "/com/example/demo/main-view.fxml";
+        String title = "Market Management System";
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/admin-dashboard.fxml"));
+        if (currentUser != null && currentUser.getUserType() == com.example.demo.util.UserType.CUSTOMER) {
+            fxmlPath = "/com/example/demo/customer-view.fxml";
+            title = "Customer Dashboard";
+        }
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
 
         try {
             Parent parent = loader.load();
             Stage stage = (Stage) usernameField.getScene().getWindow();
             Scene scene = new Scene(parent);
             stage.setScene(scene);
-            stage.setTitle("Admin Dashboard");
+            stage.setTitle(title);
             stage.show();
-            AdminDashBoardController controller = loader.getController();
-            controller.setLoggedInUser(SessionManager.getCurrentUser());
-
         } catch (IOException e) {
             CommonMethod.showAlert("Load Error", e.getMessage(), CustomAlertType.ERROR);
         }
@@ -141,10 +144,9 @@ public class LoginAndRegistrationController {
         String reEnterPassword = regReEnterPassword.getText();
         String firstName = regFirstNameField1.getText();
         String lastName = regLastNameField11.getText();
-        UserType userType = roleBox.getValue();
 
         if (email.isEmpty() || password.isEmpty() || reEnterPassword.isEmpty() ||
-                firstName.isEmpty() || lastName.isEmpty() || userType == null) {
+                firstName.isEmpty() || lastName.isEmpty()) {
             CommonMethod.showAlert("Form Error", "Please fill all fields.", CustomAlertType.WARNING);
             return;
         }
@@ -157,33 +159,34 @@ public class LoginAndRegistrationController {
             return;
         }
 
-        User user = null;
-
-        if (userType.equals(UserType.ADMIN)) {
-
-            user = Admin.builder()
-                    .email(email)
-                    .password(password)
-                    .firstName(firstName)
-                    .lastName(lastName)
-                    .userType(UserType.ADMIN)
-                    .build();
-
-        } else if (userType.equals(UserType.CASHIER)) {
-
-            user = Cashier.builder()
-                    .email(email)
-                    .password(password)
-                    .firstName(firstName)
-                    .lastName(lastName)
-                    .userType(UserType.CASHIER)
-                    .build();
-        }
+        User user = com.example.demo.tm.Customer.builder()
+                .email(email)
+                .password(password)
+                .firstName(firstName)
+                .lastName(lastName)
+                .userType(UserType.CUSTOMER)
+                .build();
         System.out.println(user);
         try {
             UserModel.registerUser(user);
+
+            // Create profile in Customer table
+            CustomerDAO customerDAO = new CustomerDAO();
+            Customer customerModel = new Customer(
+                    firstName + " " + lastName,
+                    "Unknown",
+                    "N/A", // Address placeholder
+                    null,
+                    false,
+                    0.0,
+                    password);
+            customerDAO.create(customerModel);
+
             CommonMethod.showAlert("Success", "Registration Successful!", CustomAlertType.INFORMATION);
-            clearFields();
+
+            // Auto login and redirect
+            SessionManager.setCurrentUser(user);
+            loadDashboard();
         } catch (UserEmailExsist e) {
             CommonMethod.showAlert("Email Error", e.getMessage(), CustomAlertType.ERROR);
         }
@@ -196,12 +199,19 @@ public class LoginAndRegistrationController {
         regReEnterPassword.clear();
         regFirstNameField1.clear();
         regLastNameField11.clear();
-        roleBox.setValue(null);
     }
 
     @FXML
     void showHidePassword(ActionEvent event) {
-
+        if (((CheckBox) event.getSource()).isSelected()) {
+            passwordTextField.setText(passwordField.getText());
+            passwordTextField.setVisible(true);
+            passwordField.setVisible(false);
+        } else {
+            passwordField.setText(passwordTextField.getText());
+            passwordField.setVisible(true);
+            passwordTextField.setVisible(false);
+        }
     }
 
 }

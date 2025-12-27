@@ -36,6 +36,8 @@
                 <Button mnemonicParsing="false" onAction="#handleAdd" text="Add Employee" />
                   <Button mnemonicParsing="false" onAction="#handleEdit" text="Edit Selected" />
                   <Button mnemonicParsing="false" onAction="#handleDelete" text="Delete Selected" />
+                  <Button mnemonicParsing="false" onAction="#handlePromote" text="Promote" />
+                  <Button mnemonicParsing="false" onAction="#handleDemote" text="Demote" />
               </items>
             </ToolBar>
             <TableView fx:id="employeeTable" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

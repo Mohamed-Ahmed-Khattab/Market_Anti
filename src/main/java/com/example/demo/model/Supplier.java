@@ -10,6 +10,7 @@ public class Supplier {
     private String name;
     private double rating;
     private boolean active;
+    private String productsAttribute; // For multivalued attribute in DB
 
     // Additional fields for DAO
     private String supplierName; // Alias for name or specific field
@@ -35,12 +36,19 @@ public class Supplier {
         this.products = new ArrayList<>();
     }
 
+    public void addProduct(Product p) {
+        if (products == null) {
+            products = new ArrayList<>();
+        }
+        if (!products.contains(p)) {
+            products.add(p);
+        }
+    }
+
     public void supplyProduct(Product p, int quantity) {
         if (active && p != null) {
             p.updateStock(p.getStockQuantity() + quantity);
-            if (!products.contains(p)) {
-                products.add(p);
-            }
+            addProduct(p);
             System.out.println("Supplier " + name + " supplied " + quantity + " of " + p.getName());
         }
     }
@@ -147,5 +155,13 @@ public class Supplier {
 
     public double getRating() {
         return rating;
+    }
+
+    public String getProductsAttribute() {
+        return productsAttribute;
+    }
+
+    public void setProductsAttribute(String productsAttribute) {
+        this.productsAttribute = productsAttribute;
     }
 }

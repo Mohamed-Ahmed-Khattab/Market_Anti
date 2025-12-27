@@ -67,12 +67,35 @@ public class MainController implements Initializable {
 
     @FXML
     void handleSalesReports(ActionEvent event) {
-        // Placeholder for report view
+        loadView("report-view.fxml");
+    }
+
+    @FXML
+    void handleSupply(ActionEvent event) {
+        loadView("supplier-order.fxml");
+    }
+
+    @FXML
+    void handleLogout(ActionEvent event) {
+        try {
+            com.example.demo.util.SessionManager.clearSession();
+            Parent root = FXMLLoader.load(getClass().getResource("/com/example/demo/login-view.fxml"));
+            javafx.stage.Stage stage = (javafx.stage.Stage) contentArea.getScene().getWindow();
+            stage.setTitle("Login");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Object loadView(String fxmlFile) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/" + fxmlFile));
+            java.net.URL resource = getClass().getResource("/com/example/demo/" + fxmlFile);
+            if (resource == null) {
+                throw new IOException("FXML file not found: /com/example/demo/" + fxmlFile);
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
             Parent view = loader.load();
 
             contentArea.getChildren().clear();
@@ -87,7 +110,13 @@ public class MainController implements Initializable {
             return loader.getController();
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Could not load view: " + fxmlFile);
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.ERROR);
+            alert.setTitle("Load Error");
+            alert.setHeaderText("Could not load view: " + fxmlFile);
+            alert.setContentText(
+                    e.getMessage() != null ? e.getMessage() : "Unknown error occurred during FXML loading.");
+            alert.showAndWait();
             return null;
         }
     }

@@ -45,7 +45,7 @@ public class CustomerController implements Initializable {
 
     private void setupTableColumns() {
         // Use SSN as the ID since Model doesn't have numeric ID
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("ssn"));
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("customerID"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         // Remove other columns setup
     }

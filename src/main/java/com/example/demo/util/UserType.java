@@ -4,4 +4,5 @@ public enum UserType {
 
     ADMIN,
     CASHIER,
+    CUSTOMER,
 }

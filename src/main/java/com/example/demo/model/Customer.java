@@ -10,9 +10,15 @@ public class Customer extends Person {
     private Employee assignedEmployee;
     private boolean isPremium;
     private double balance;
+    private String city;
+    private String state;
+    private String zipCode;
+    private String country;
+    private int loyaltyPoints;
 
-    public Customer(String name, String gender, String address, LocalDate dob, boolean isPremium, double balance) {
-        super(name, gender, address, dob);
+    public Customer(String name, String gender, String address, LocalDate dob, boolean isPremium, double balance,
+            String password) {
+        super(name, gender, address, dob, password);
         this.isPremium = isPremium;
         this.balance = balance;
         this.orderHistory = new ArrayList<>();
@@ -121,5 +127,45 @@ public class Customer extends Person {
 
     public void setCustomerID(int id) {
         this.customerID = id;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public int getLoyaltyPoints() {
+        return loyaltyPoints;
+    }
+
+    public void setLoyaltyPoints(int loyaltyPoints) {
+        this.loyaltyPoints = loyaltyPoints;
     }
 }

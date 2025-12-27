@@ -122,7 +122,8 @@ public class SupplierDAO {
 
     private Supplier extractSupplierFromResultSet(ResultSet rs) throws SQLException {
         Supplier supplier = new Supplier();
-        supplier.setSupplierID(rs.getInt("supplierID"));
+        int id = rs.getInt("supplierID");
+        supplier.setSupplierID(id);
         supplier.setSupplierName(rs.getString("supplierName"));
         supplier.setContactPerson(rs.getString("contactPerson"));
         supplier.setEmail(rs.getString("email"));
@@ -131,6 +132,15 @@ public class SupplierDAO {
         supplier.setCity(rs.getString("city"));
         supplier.setCountry(rs.getString("country"));
         supplier.setRating(rs.getDouble("rating"));
+
+        // Multivalued attribute 'products' implementation linked via SupplierProduct
+        // table
+        try {
+            ProductDAO productDAO = new ProductDAO();
+            supplier.setProducts(productDAO.getProductsLinkedToSupplier(id));
+        } catch (Exception e) {
+            System.err.println("Error fetching products for supplier " + id + ": " + e.getMessage());
+        }
 
         return supplier;
     }

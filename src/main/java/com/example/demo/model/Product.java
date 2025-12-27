@@ -6,8 +6,15 @@ import java.util.List;
 public class Product implements SearchItem {
     private int productID;
     private String name;
+    private String description;
+    private String category;
     private int stockQuantity;
     private double price;
+    private double cost;
+    private int reorderLevel;
+    private int supplierID;
+    private String barcode;
+    private String sku;
     private List<Product> substitue;
 
     public Product() {
@@ -20,6 +27,7 @@ public class Product implements SearchItem {
         this.stockQuantity = stockQuantity;
         this.price = price;
         this.substitue = new ArrayList<>();
+        this.reorderLevel = 10; // Default
     }
 
     @Override
@@ -101,5 +109,61 @@ public class Product implements SearchItem {
 
     public List<Product> getSubstitue() {
         return substitue;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    public int getReorderLevel() {
+        return reorderLevel;
+    }
+
+    public void setReorderLevel(int reorderLevel) {
+        this.reorderLevel = reorderLevel;
+    }
+
+    public int getSupplierID() {
+        return supplierID;
+    }
+
+    public void setSupplierID(int supplierID) {
+        this.supplierID = supplierID;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 }

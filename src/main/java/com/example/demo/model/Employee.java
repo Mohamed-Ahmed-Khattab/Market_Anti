@@ -26,9 +26,10 @@ public class Employee extends Person {
         this.phoneNumbers = new ArrayList<>();
     }
 
-    public Employee(String name, String gender, String address, LocalDate dob, double salary, String jobTitle,
+    public Employee(String name, String gender, String address, LocalDate dob, String password, double salary,
+            String jobTitle,
             List<String> phoneNumbers) {
-        super(name, gender, address, dob);
+        super(name, gender, address, dob, password);
         this.salary = salary;
         this.jobTitle = jobTitle;
         this.phoneNumbers = phoneNumbers;
