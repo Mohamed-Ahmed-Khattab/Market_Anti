@@ -73,6 +73,7 @@ public class MainController implements Initializable {
     @FXML
     void handleSupply(ActionEvent event) {
         loadView("supplier-order.fxml");
+<<<<<<< HEAD
     }
 
     @FXML
@@ -87,6 +88,8 @@ public class MainController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+=======
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
     }
 
     private Object loadView(String fxmlFile) {

@@ -115,9 +115,19 @@ public class ReportController implements Initializable {
             stmt.setDate(1, Date.valueOf(selectedDate));
             ResultSet rs = stmt.executeQuery();
 
+<<<<<<< HEAD
             boolean foundData = false;
             while (rs.next()) {
                 foundData = true;
+=======
+<<<<<<< HEAD
+            boolean foundData = false;
+            while (rs.next()) {
+                foundData = true;
+=======
+            while (rs.next()) {
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
                 String productName = rs.getString("productName");
                 int quantity = rs.getInt("quantity");
                 double unitPrice = rs.getDouble("priceAtAdd");
@@ -136,10 +146,19 @@ public class ReportController implements Initializable {
                 totalSales += total;
             }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
             if (!foundData) {
                 System.out.println("No sales data found for date: " + selectedDate);
             }
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
         } catch (SQLException e) {
             e.printStackTrace();
             AlertUtil.showError("Error", "Could not generate report: " + e.getMessage());
@@ -149,7 +168,14 @@ public class ReportController implements Initializable {
         // Update the table
         if (reportTable != null) {
             reportTable.setItems(reportItems);
+<<<<<<< HEAD
             reportTable.refresh();
+=======
+<<<<<<< HEAD
+            reportTable.refresh();
+=======
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
         }
 
         // Update total labels

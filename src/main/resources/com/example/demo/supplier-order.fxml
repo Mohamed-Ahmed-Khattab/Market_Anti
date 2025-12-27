@@ -16,12 +16,28 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" 
+<<<<<<< HEAD
             prefHeight="700.0" prefWidth="800.0" style="-fx-background-color: #dacef0;" 
+=======
+<<<<<<< HEAD
+            prefHeight="700.0" prefWidth="800.0" style="-fx-background-color: #dacef0;" 
+=======
+            prefHeight="500.0" prefWidth="600.0" style="-fx-background-color: #dacef0;" 
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
             fx:controller="com.example.demo.controller.SupplierOrderController">
     <children>
         <!-- Header -->
+<<<<<<< HEAD
         <Label alignment="CENTER" prefHeight="52.0" prefWidth="800.0" 
+=======
+<<<<<<< HEAD
+        <Label alignment="CENTER" prefHeight="52.0" prefWidth="800.0" 
+=======
+        <Label alignment="CENTER" prefHeight="52.0" prefWidth="600.0" 
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
                style="-fx-background-color: #7854ba;" text="SUPPLIER ORDER" textFill="WHITE">
             <font>
                 <Font name="System Bold" size="28.0" />
@@ -31,7 +47,15 @@
 
         
         <!-- Main Content -->
+<<<<<<< HEAD
         <VBox layoutX="50.0" layoutY="65.0" prefWidth="700.0" spacing="15.0">
+=======
+<<<<<<< HEAD
+        <VBox layoutX="50.0" layoutY="65.0" prefWidth="700.0" spacing="15.0">
+=======
+        <VBox layoutX="50.0" layoutY="80.0" prefWidth="500.0" spacing="20.0">
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
             <children>
                 <Label style="-fx-font-weight: bold;" text="Order products from suppliers to add to stock">
                     <font>
@@ -39,6 +63,7 @@
                     </font>
                 </Label>
                 
+<<<<<<< HEAD
                 <GridPane hgap="15.0" vgap="10.0">
                     <columnConstraints>
                         <ColumnConstraints prefWidth="150.0" />
@@ -51,6 +76,13 @@
                         <RowConstraints />
                         <RowConstraints />
                     </rowConstraints>
+=======
+<<<<<<< HEAD
+                <GridPane hgap="15.0" vgap="10.0">
+=======
+                <GridPane hgap="15.0" vgap="15.0">
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
                     <children>
                         <!-- Supplier Selection -->
                         <Label text="Select Supplier:" GridPane.columnIndex="0" GridPane.rowIndex="0">
@@ -77,21 +109,42 @@
                             </font>
                         </Label>
                         <TextField fx:id="quantityField" prefHeight="35.0" prefWidth="300.0" 
+<<<<<<< HEAD
                                    promptText="Enter quantity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         
                         <!-- Price (for new products) -->
                         <Label text="Product Cost:" GridPane.columnIndex="0" GridPane.rowIndex="3">
+=======
+<<<<<<< HEAD
+                                   promptText="Enter quantity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        
+                        <!-- Price (for new products) -->
+                        <Label text="Price (New Product):" GridPane.columnIndex="0" GridPane.rowIndex="3">
+=======
+                                   promptText="Enter quantity to order" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        
+                        <!-- Price (for new products) -->
+                        <Label text="Price (for new products):" GridPane.columnIndex="0" GridPane.rowIndex="3">
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
                             <font>
                                 <Font name="System Bold" size="13.0" />
                             </font>
                         </Label>
+<<<<<<< HEAD
                         <TextField fx:id="priceField" editable="false" prefHeight="35.0" prefWidth="300.0" 
                                    promptText="Auto-filled cost" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+=======
+                        <TextField fx:id="priceField" prefHeight="35.0" prefWidth="300.0" 
+<<<<<<< HEAD
+                                   promptText="Price (only for new products)" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
                                    
                         <Button mnemonicParsing="false" onAction="#handleAddToList" 
                                 prefHeight="35.0" prefWidth="120.0" 
                                 style="-fx-background-color: #2196F3; -fx-font-weight: bold;" 
                                 text="+ Add to List" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+<<<<<<< HEAD
                     </children>
                 </GridPane>
                 
@@ -103,27 +156,94 @@
                         <TableColumn fx:id="colPrice" prefWidth="250.0" text="Price (New)" />
                     </columns>
                 </TableView>
+=======
+                    </children>
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="150.0" />
+                        <ColumnConstraints prefWidth="350.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                    </rowConstraints>
+                </GridPane>
+                
+                <!-- Supply Cart Table -->
+                <TableView fx:id="tblSupply" prefHeight="250.0" prefWidth="700.0">
+                    <columns>
+                        <TableColumn fx:id="colProduct" prefWidth="300.0" text="Product Name" />
+                        <TableColumn fx:id="colQuantity" prefWidth="150.0" text="Quantity" />
+                        <TableColumn fx:id="colPrice" prefWidth="250.0" text="Price (New)" />
+                    </columns>
+                </TableView>
+=======
+                                   promptText="Enter price (only for new products)" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    </children>
+                </GridPane>
+                
+                <!-- Info Label -->
+                <Label style="-fx-text-fill: #666666;" 
+                       text="Note: If product exists, quantity will be added to current stock.&#10;If product is new, it will be created with the specified price and supplier.">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
                 
                 <!-- Place Order Button -->
                 <HBox alignment="CENTER" spacing="20.0">
                     <children>
+<<<<<<< HEAD
                         <Button fx:id="btnProcess" mnemonicParsing="false" onAction="#handlePlaceOrder" 
                                 prefHeight="45.0" prefWidth="250.0" 
                                 style="-fx-background-color: #4CAF50; -fx-font-weight: bold;" 
                                 text="Process All Supply Tasks" textFill="WHITE">
+=======
+                        <Button mnemonicParsing="false" onAction="#handlePlaceOrder" 
+<<<<<<< HEAD
+                                prefHeight="45.0" prefWidth="250.0" 
+                                style="-fx-background-color: #4CAF50; -fx-font-weight: bold;" 
+                                text="Process All Supply Tasks" textFill="WHITE">
+=======
+                                prefHeight="45.0" prefWidth="200.0" 
+                                style="-fx-background-color: #4CAF50; -fx-font-weight: bold;" 
+                                text="Place Order" textFill="WHITE">
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Button>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
                         <Button mnemonicParsing="false" onAction="#handleClearList"
                                 prefHeight="45.0" prefWidth="150.0"
                                 style="-fx-background-color: #f44336; -fx-font-weight: bold;"
                                 text="Clear List" textFill="WHITE" />
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
                     </children>
                 </HBox>
             </children>
             <padding>
+<<<<<<< HEAD
                 <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+=======
+<<<<<<< HEAD
+                <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+=======
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
             </padding>
         </VBox>
     </children>

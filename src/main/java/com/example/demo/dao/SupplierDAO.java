@@ -18,7 +18,7 @@ public class SupplierDAO {
     }
 
     public boolean create(Supplier supplier) {
-        String sql = "INSERT INTO Supplier (supplierName, contactPerson, email, phoneNumber, address, city, country, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Supplier (supplierName, contactPerson, email, phoneNumber, address, city, country, rating, products) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbManager.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -31,6 +31,7 @@ public class SupplierDAO {
             stmt.setString(6, supplier.getCity());
             stmt.setString(7, supplier.getCountry());
             stmt.setDouble(8, supplier.getRating());
+            stmt.setString(9, supplier.getProductsAttribute());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -84,7 +85,7 @@ public class SupplierDAO {
     }
 
     public boolean update(Supplier supplier) {
-        String sql = "UPDATE Supplier SET supplierName = ?, contactPerson = ?, email = ?, phoneNumber = ?, address = ?, city = ?, country = ?, rating = ? WHERE supplierID = ?";
+        String sql = "UPDATE Supplier SET supplierName = ?, contactPerson = ?, email = ?, phoneNumber = ?, address = ?, city = ?, country = ?, rating = ?, products = ? WHERE supplierID = ?";
 
         try (Connection conn = dbManager.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -97,7 +98,8 @@ public class SupplierDAO {
             stmt.setString(6, supplier.getCity());
             stmt.setString(7, supplier.getCountry());
             stmt.setDouble(8, supplier.getRating());
-            stmt.setInt(9, supplier.getSupplierID());
+            stmt.setString(9, supplier.getProductsAttribute());
+            stmt.setInt(10, supplier.getSupplierID());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -132,6 +134,11 @@ public class SupplierDAO {
         supplier.setCity(rs.getString("city"));
         supplier.setCountry(rs.getString("country"));
         supplier.setRating(rs.getDouble("rating"));
+        supplier.setProductsAttribute(rs.getString("products"));
+
+        // Multivalued attribute 'products' implementation
+        ProductDAO productDAO = new ProductDAO();
+        supplier.setProducts(productDAO.getProductsBySupplierId(id));
 
         // Multivalued attribute 'products' implementation linked via SupplierProduct
         // table

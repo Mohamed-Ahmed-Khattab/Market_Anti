@@ -248,6 +248,10 @@ public class ProductDAO {
         }
         return false;
     }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
 
     public List<Product> getProductsBySupplierId(int supplierID) {
         List<Product> products = new ArrayList<>();
@@ -267,6 +271,7 @@ public class ProductDAO {
         }
         return products;
     }
+<<<<<<< HEAD
 
     public List<Product> getProductsLinkedToSupplier(int supplierID) {
         List<Product> products = new ArrayList<>();
@@ -293,4 +298,8 @@ public class ProductDAO {
         }
         return products;
     }
+=======
+=======
+>>>>>>> bdef750f8e7c2fa3a4db403d7c8aa264e9ab3cb6
+>>>>>>> 881edc6b6d85faf1aa7d86d91efda63334a2ee3e
 }
